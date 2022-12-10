@@ -32,7 +32,7 @@ public class TLTest {
         commonCertificateVerifier.setAIASource(new DefaultAIASource());
 
         SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(
-                new FileDocument("src/main/resources/ro.xml"));
+                new FileDocument("src/main/resources/tmp/ro.xml"));
         validator.setCertificateVerifier(commonCertificateVerifier);
 
         System.out.println("------------------------------------------------------------");

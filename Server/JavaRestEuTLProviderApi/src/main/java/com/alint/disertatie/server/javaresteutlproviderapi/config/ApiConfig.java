@@ -1,7 +1,5 @@
-package com.alint.disertatie.server.javaresteutlproviderapi;
+package com.alint.disertatie.server.javaresteutlproviderapi.config;
 
-import eu.europa.esig.dss.model.DSSException;
-import eu.europa.esig.dss.model.FileDocument;
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
 import eu.europa.esig.dss.service.http.commons.FileCacheDataLoader;
@@ -9,7 +7,6 @@ import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
 import eu.europa.esig.dss.spi.client.http.DSSFileLoader;
 import eu.europa.esig.dss.spi.client.http.IgnoreDataLoader;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
-import eu.europa.esig.dss.spi.x509.*;
 import eu.europa.esig.dss.spi.x509.aia.DefaultAIASource;
 import eu.europa.esig.dss.tsl.alerts.LOTLAlert;
 import eu.europa.esig.dss.tsl.alerts.TLAlert;
@@ -25,36 +22,63 @@ import eu.europa.esig.dss.tsl.cache.CacheCleaner;
 import eu.europa.esig.dss.tsl.function.OfficialJournalSchemeInformationURI;
 import eu.europa.esig.dss.tsl.job.TLValidationJob;
 import eu.europa.esig.dss.tsl.source.LOTLSource;
-import eu.europa.esig.dss.tsl.sync.AcceptAllStrategy;
+import eu.europa.esig.dss.tsl.sync.ExpirationAndSignatureCheckStrategy;
+
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
-import eu.europa.esig.dss.validation.SignedDocumentValidator;
+import lombok.extern.log4j.Log4j2;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
-import static eu.europa.esig.dss.enumerations.QCType.LOG;
+@Configuration
+@EnableWebMvc
+@ComponentScan("com.alint.disertatie.server.javaresteutlproviderapi")
+@PropertySource({"classpath:application.properties"})
+@Log4j2
+public class ApiConfig {
 
-public class TLValidator {
-    private static final String LOTL_URL = "https://ec.europa.eu/tools/lotl/eu-lotl.xml";
-    private static final String OJ_URL = "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG";
+    private final Environment env;
 
+    @Autowired
+    public ApiConfig(Environment env) {
+        this.env = env;
+    }
 
+    @Bean
+    public CommonCertificateVerifier certificateVerifier() {
+        CommonCertificateVerifier certificateVerifier = new CommonCertificateVerifier();
+
+        certificateVerifier.setTrustedCertSources(trustedCertificateSource());
+        certificateVerifier.setCrlSource(new OnlineCRLSource());
+        certificateVerifier.setOcspSource(new OnlineOCSPSource());
+        certificateVerifier.setAIASource(new DefaultAIASource());
+
+        return certificateVerifier;
+    }
+
+    @Bean
     public TLValidationJob job() {
         TLValidationJob job = new TLValidationJob();
         job.setOfflineDataLoader(offlineLoader());
         job.setOnlineDataLoader(onlineLoader());
         job.setTrustedListCertificateSource(trustedCertificateSource());
-        job.setSynchronizationStrategy(new AcceptAllStrategy());
+        job.setSynchronizationStrategy(acceptValidOnlyStrategy());
         job.setCacheCleaner(cacheCleaner());
 
         LOTLSource europeanLOTL = europeanLOTL();
         job.setListOfTrustedListSources(europeanLOTL);
 
         job.setLOTLAlerts(Arrays.asList(ojUrlAlert(europeanLOTL), lotlLocationAlert(europeanLOTL)));
-        job.setTLAlerts(Arrays.asList(tlSigningAlert(), tlExpirationDetection()));
+        job.setTLAlerts(Arrays.asList(tlSigningAlert(),tlExpirationDetection()));
 
         return job;
+
     }
 
     public TrustedListsCertificateSource trustedCertificateSource() {
@@ -63,25 +87,35 @@ public class TLValidator {
 
     public LOTLSource europeanLOTL() {
         LOTLSource lotlSource = new LOTLSource();
-        lotlSource.setUrl(LOTL_URL);
-//		lotlSource.setCertificateSource(officialJournalContentKeyStore());
-        lotlSource.setCertificateSource(new TrustedListsCertificateSource());
-        lotlSource.setSigningCertificatesAnnouncementPredicate(new OfficialJournalSchemeInformationURI(OJ_URL));
+        lotlSource.setUrl(env.getProperty("dss.europa.tl.lotl_url"));
+        // lotlSource.setCertificateSource(officialJournalContentKeyStore());
+        lotlSource.setCertificateSource( new TrustedListsCertificateSource());
+
+        lotlSource.setSigningCertificatesAnnouncementPredicate(
+                new OfficialJournalSchemeInformationURI(
+                        Objects.requireNonNull(env.getProperty("dss.europa.oj.ojeu_url"))
+                )
+        );
+
         lotlSource.setPivotSupport(true);
+
         return lotlSource;
     }
 
-    public CertificateSource officialJournalContentKeyStore() {
-        try {
-            return new KeyStoreCertificateSource(new File("src/main/resources/keystore.p12"), "PKCS12", "dss-password");
-        } catch (IOException e) {
-            throw new DSSException("Unable to load the keystore", e);
-        }
+    public ExpirationAndSignatureCheckStrategy acceptValidOnlyStrategy() {
+
+        ExpirationAndSignatureCheckStrategy checkStrategy = new ExpirationAndSignatureCheckStrategy();
+        checkStrategy.setAcceptExpiredListOfTrustedLists(false);
+        checkStrategy.setAcceptExpiredTrustedList(false);
+        checkStrategy.setAcceptInvalidListOfTrustedLists(false);
+        checkStrategy.setAcceptInvalidTrustedList(false);
+
+        return checkStrategy;
     }
 
     public DSSFileLoader offlineLoader() {
         FileCacheDataLoader offlineFileLoader = new FileCacheDataLoader();
-        offlineFileLoader.setCacheExpirationTime(-1); // negative value means cache never expires
+        offlineFileLoader.setCacheExpirationTime(-1); // do not expire cache
         offlineFileLoader.setDataLoader(new IgnoreDataLoader());
         offlineFileLoader.setFileCacheDirectory(tlCacheDirectory());
         return offlineFileLoader;
@@ -89,7 +123,7 @@ public class TLValidator {
 
     public DSSFileLoader onlineLoader() {
         FileCacheDataLoader onlineFileLoader = new FileCacheDataLoader();
-        onlineFileLoader.setCacheExpirationTime(0);
+        onlineFileLoader.setCacheExpirationTime(0); // do not expire cache
         onlineFileLoader.setDataLoader(dataLoader());
         onlineFileLoader.setFileCacheDirectory(tlCacheDirectory());
         return onlineFileLoader;
@@ -99,7 +133,7 @@ public class TLValidator {
         File rootFolder = new File(System.getProperty("java.io.tmpdir"));
         File tslCache = new File(rootFolder, "dss-tsl-loader");
         if (tslCache.mkdirs()) {
-            LOG.info("TL Cache folder : {}", tslCache.getAbsolutePath());
+            log.info("TL Cache folder : {}", tslCache.getAbsolutePath());
         }
         return tslCache;
     }
@@ -113,16 +147,16 @@ public class TLValidator {
         cacheCleaner.setCleanMemory(true);
         cacheCleaner.setCleanFileSystem(true);
         cacheCleaner.setDSSFileLoader(offlineLoader());
+
         return cacheCleaner;
     }
 
-    // Optionally : alerting.
-    // Recommended detections : OJUrlChangeDetection + LOTLLocationChangeDetection
+    // Alerting
 
     public TLAlert tlSigningAlert() {
-        TLSignatureErrorDetection signingDetection = new TLSignatureErrorDetection();
+        TLSignatureErrorDetection signatureErrorDetection = new TLSignatureErrorDetection();
         LogTLSignatureErrorAlertHandler handler = new LogTLSignatureErrorAlertHandler();
-        return new TLAlert(signingDetection, handler);
+        return new TLAlert(signatureErrorDetection,handler);
     }
 
     public TLAlert tlExpirationDetection() {
@@ -142,4 +176,5 @@ public class TLValidator {
         LogLOTLLocationChangeAlertHandler handler = new LogLOTLLocationChangeAlertHandler();
         return new LOTLAlert(lotlLocationDetection, handler);
     }
+
 }
