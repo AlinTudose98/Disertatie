@@ -7,6 +7,8 @@ import eu.europa.esig.dss.model.FileDocument;
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
 import eu.europa.esig.dss.simplereport.SimpleReport;
+import eu.europa.esig.dss.spi.tsl.LOTLInfo;
+import eu.europa.esig.dss.spi.tsl.TLValidationJobSummary;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.spi.x509.aia.DefaultAIASource;
 import eu.europa.esig.dss.tsl.job.TLValidationJob;
@@ -14,6 +16,8 @@ import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
 import eu.europa.esig.dss.validation.reports.Reports;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 public class TLTest {
 
@@ -32,7 +36,7 @@ public class TLTest {
         commonCertificateVerifier.setAIASource(new DefaultAIASource());
 
         SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(
-                new FileDocument("src/main/resources/tmp/ro.xml"));
+                new FileDocument("src/main/resources/tmp/lotl_1670762464654.xml"));
         validator.setCertificateVerifier(commonCertificateVerifier);
 
         System.out.println("------------------------------------------------------------");
@@ -50,5 +54,23 @@ public class TLTest {
         System.out.println();
         System.out.println("------------------------------------------------------------");
         System.out.println(xmlResult);
+    }
+
+    @Test
+    public void getLOTL() {
+        TLValidator tlValidator = new TLValidator();
+
+        TLValidationJob job = tlValidator.job();
+        TrustedListsCertificateSource trustedListsCertificateSource = new TrustedListsCertificateSource();
+        job.setTrustedListCertificateSource(trustedListsCertificateSource);
+        job.onlineRefresh();
+
+        TLValidationJobSummary summary = job.getSummary();
+
+        List<LOTLInfo> lotlInfos = summary.getLOTLInfos();
+        LOTLInfo lotlInfo = lotlInfos.get(0);
+
+        int a = 0;
+
     }
 }

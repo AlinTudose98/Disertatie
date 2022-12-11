@@ -1,4 +1,4 @@
-package com.alint.disertatie.server.javaresteutlproviderapi.config;
+package com.alint.disertatie.server.javaresteutlproviderapi;
 
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
@@ -24,31 +24,27 @@ import eu.europa.esig.dss.tsl.job.TLValidationJob;
 import eu.europa.esig.dss.tsl.source.LOTLSource;
 import eu.europa.esig.dss.tsl.sync.AcceptAllStrategy;
 import eu.europa.esig.dss.tsl.sync.ExpirationAndSignatureCheckStrategy;
-
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import lombok.extern.log4j.Log4j2;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Objects;
 
-@Configuration
-@EnableWebMvc
-@ComponentScan("com.alint.disertatie.server.javaresteutlproviderapi")
-@PropertySource({"classpath:application.properties"})
+@SpringBootApplication
 @Log4j2
-public class ApiConfig {
+public class JavaRestEuTlProviderApiApplication {
+
 
     private final Environment env;
 
     @Autowired
-    public ApiConfig(Environment env) {
+    public JavaRestEuTlProviderApiApplication(Environment env) {
         this.env = env;
     }
 
@@ -177,5 +173,13 @@ public class ApiConfig {
         LogLOTLLocationChangeAlertHandler handler = new LogLOTLLocationChangeAlertHandler();
         return new LOTLAlert(lotlLocationDetection, handler);
     }
+
+
+    public static void main(String[] args) {
+        SpringApplication.run(JavaRestEuTlProviderApiApplication.class, args);
+    }
+
+
+
 
 }

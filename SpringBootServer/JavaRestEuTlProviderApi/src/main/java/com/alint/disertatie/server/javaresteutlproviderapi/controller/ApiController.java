@@ -2,17 +2,16 @@ package com.alint.disertatie.server.javaresteutlproviderapi.controller;
 
 import com.alint.disertatie.server.javaresteutlproviderapi.message.ResponseMessage;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.Util;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import eu.europa.esig.dss.enumerations.Indication;
 import eu.europa.esig.dss.model.FileDocument;
 import eu.europa.esig.dss.simplereport.SimpleReport;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.tsl.job.TLValidationJob;
-import eu.europa.esig.dss.tsl.source.LOTLSource;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
 import eu.europa.esig.dss.validation.reports.Reports;
 import lombok.extern.log4j.Log4j2;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -26,16 +25,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.print.Doc;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.awt.*;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 
 @RestController
 @Log4j2
