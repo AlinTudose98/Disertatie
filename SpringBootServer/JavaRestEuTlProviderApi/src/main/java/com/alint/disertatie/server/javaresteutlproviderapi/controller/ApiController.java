@@ -32,7 +32,7 @@ import java.io.*;
 
 @RestController
 @Log4j2
-@RequestMapping("/")
+@RequestMapping("/api")
 public class ApiController {
 
     private final Environment env;
@@ -53,14 +53,18 @@ public class ApiController {
     @RequestMapping(value = "/lotl", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMessage lotl() throws IOException, ParserConfigurationException, SAXException {
 
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+
 
         String response = Util.getResponseFromUrl(env.getProperty("dss.europa.tl.lotl_url"));
 
         ResponseMessage responseMessage = new ResponseMessage(0, null, authMode, "FILE", response);
 
         if (authMode.equalsIgnoreCase("server") || authMode.equalsIgnoreCase("both")) {
-            String filename = "../temp/lotl_" + System.currentTimeMillis() + ".xml";
-            File tmpFile = new File(filename);
+            String filename = "lotl_" + System.currentTimeMillis() + ".xml";
+            File rootTempFolder = new File(System.getProperty("java.io.tmpdir"));
+            File tslCache = new File(rootTempFolder, "dss-tsl-loader");
+            File tmpFile = new File(tslCache,filename);
             if (!tmpFile.createNewFile())
                 throw new IOException();
 

@@ -1,6 +1,5 @@
 package com.alint.disertatie.server.javaresteutlproviderapi.entity;
 
-import com.alint.disertatie.server.javaresteutlproviderapi.enums.TSLType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OtherTSLPointer {
-    private TSLType tslType;
-    private String schemeTerritory;
-    private String schemeOperatorName;
-    private String mimeType;
+public class PostalAddress {
+    private String streetAddress;
+    private String locality;
+    private String postalCode;
+    private String countryName;
 }

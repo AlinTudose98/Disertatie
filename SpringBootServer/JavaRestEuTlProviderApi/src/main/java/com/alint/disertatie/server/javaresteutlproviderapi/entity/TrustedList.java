@@ -13,12 +13,11 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListOfTrustedLists {
+public class TrustedList {
     private String distributionPoint;
-    private String schemeTerritory;
     private TSLType tslType;
     private Date listIssueDateTime;
     private Date nextUpdate;
-    private int historicalInformationPeriod;
-    private List<OtherTSLPointer> pointersToOtherTsl;
+    private List<TrustServiceProvider> trustServiceProviders;
+    private List<OtherTSLPointer> pointersToOtherTSL;
 }

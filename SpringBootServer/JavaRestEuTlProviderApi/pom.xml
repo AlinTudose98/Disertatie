@@ -2,95 +2,95 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.0</version>
+        <version>2.7.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.alint.disertatie.server</groupId>
     <artifactId>JavaRestEuTlProviderApi</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>JavaRestEuTlProviderApi</name>
     <description>JavaRestEuTlProviderApi</description>
+
     <properties>
-        <java.version>19</java.version>
+        <java.version>17</java.version>
     </properties>
+
     <dependencies>
 
-        <!-- https://mvnrepository.com/artifact/org.w3c/dom -->
+        <!-- XML DOM Parsing -->
         <dependency>
             <groupId>org.w3c</groupId>
             <artifactId>dom</artifactId>
             <version>2.3.0-jaxb-1.0.6</version>
         </dependency>
 
+
+        <!-- Jackson databind for JSON and XML -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>2.14.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.14.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/eu.europa.ec.joinup.sd-dss/dss-service -->
+
+        <!-- European committee DSS libraries -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-service</artifactId>
             <version>5.11.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/eu.europa.ec.joinup.sd-dss/dss-tsl-validation -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-tsl-validation</artifactId>
             <version>5.11.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/eu.europa.ec.joinup.sd-dss/dss-utils -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-utils</artifactId>
             <version>5.11.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/eu.europa.ec.joinup.sd-dss/dss-xades -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-xades</artifactId>
             <version>5.11.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/eu.europa.ec.joinup.sd-dss/dss-utils-apache-commons -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-utils-apache-commons</artifactId>
             <version>5.11.1</version>
         </dependency>
 
+
+        <!-- JAXB support -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.4.0-b180830.0359</version>
+            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-        <!-- JAXB needs javax.activation module (jdk9) -->
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>javax.activation-api</artifactId>
-            <version>1.2.0</version>
+            <version>2.3.1</version>
+            <scope>runtime</scope>
         </dependency>
 
 
+        <!-- Spring boot starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -126,6 +126,7 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>
