@@ -1,5 +1,5 @@
 package com.alint.disertatie.server.javaresteutlproviderapi.enums;
 
-public interface StringBasedEnum {git
+public interface StringBasedEnum {
     public String getValue();
 }
