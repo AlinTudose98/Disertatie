@@ -53,9 +53,6 @@ public class ApiController {
     @RequestMapping(value = "/lotl", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseMessage lotl() throws IOException, ParserConfigurationException, SAXException {
 
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
-
-
         String response = Util.getResponseFromUrl(env.getProperty("dss.europa.tl.lotl_url"));
 
         ResponseMessage responseMessage = new ResponseMessage(0, null, authMode, "FILE", response);
