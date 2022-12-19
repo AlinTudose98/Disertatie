@@ -1,5 +1,8 @@
 package com.alint.disertatie.server.javaresteutlproviderapi;
 
+import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLParser;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLValidator;
+import com.google.common.util.concurrent.Monitor;
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
 import eu.europa.esig.dss.service.http.commons.FileCacheDataLoader;
@@ -24,12 +27,17 @@ import eu.europa.esig.dss.tsl.job.TLValidationJob;
 import eu.europa.esig.dss.tsl.source.LOTLSource;
 import eu.europa.esig.dss.tsl.sync.AcceptAllStrategy;
 import eu.europa.esig.dss.tsl.sync.ExpirationAndSignatureCheckStrategy;
+import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
 import java.io.File;
@@ -42,14 +50,28 @@ public class JavaRestEuTlProviderApiApplication {
 
 
     private final Environment env;
+    private final ApplicationContext applicationContext;
 
     @Autowired
-    public JavaRestEuTlProviderApiApplication(Environment env) {
+    public JavaRestEuTlProviderApiApplication(Environment env, ApplicationContext applicationContext) {
         this.env = env;
+        this.applicationContext = applicationContext;
     }
 
     @Bean
-    public CommonCertificateVerifier certificateVerifier() {
+    @Scope(value=ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public Monitor tlParserMutex() {
+        return new Monitor();
+    }
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public Monitor tlValidationMutex() {
+        return new Monitor();
+    }
+
+    @Bean
+    public CertificateVerifier certificateVerifier() {
         CommonCertificateVerifier certificateVerifier = new CommonCertificateVerifier();
 
         certificateVerifier.setTrustedCertSources(trustedCertificateSource());
@@ -176,7 +198,17 @@ public class JavaRestEuTlProviderApiApplication {
 
 
     public static void main(String[] args) {
-        SpringApplication.run(JavaRestEuTlProviderApiApplication.class, args);
+        ConfigurableApplicationContext context =
+                SpringApplication.run(JavaRestEuTlProviderApiApplication.class, args);
+
+        EuTLValidator euTLValidator = context.getBean("euTLValidator", EuTLValidator.class);
+        EuTLParser euTLParser = context.getBean("euTLParser", EuTLParser.class);
+
+        Thread verifyThread = new Thread(euTLValidator,"validatorThread");
+        Thread parserThread = new Thread(euTLParser,"parserThread");
+        verifyThread.start();
+        parserThread.start();
+
     }
 
 

@@ -1,7 +1,11 @@
 package com.alint.disertatie.server.javaresteutlproviderapi.controller;
 
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
+import com.alint.disertatie.server.javaresteutlproviderapi.message.LotlResponse;
 import com.alint.disertatie.server.javaresteutlproviderapi.message.ResponseMessage;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLParser;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.Util;
+import com.google.common.util.concurrent.Monitor;
 import eu.europa.esig.dss.enumerations.Indication;
 import eu.europa.esig.dss.model.FileDocument;
 import eu.europa.esig.dss.simplereport.SimpleReport;
@@ -14,7 +18,11 @@ import lombok.extern.log4j.Log4j2;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,116 +43,38 @@ import java.io.*;
 @RequestMapping("/api")
 public class ApiController {
 
+    private final ApplicationContext applicationContext;
     private final Environment env;
+    private final Monitor parserMutex;
     private final String authMode;
     private final String authForce;
     private final CertificateVerifier certificateVerifier;
     private final TLValidationJob job;
 
     @Autowired
-    public ApiController(Environment env, CertificateVerifier certificateVerifier, TLValidationJob job) {
+    public ApiController(ApplicationContext applicationContext, Environment env, @Qualifier("tlParserMutex") Monitor parserMutex, CertificateVerifier certificateVerifier, TLValidationJob job) {
+        this.applicationContext = applicationContext;
         this.env = env;
+        this.parserMutex = parserMutex;
         this.certificateVerifier = certificateVerifier;
         this.job = job;
         this.authMode = env.getProperty("java.utils.operation.auth.mode");
         this.authForce = env.getProperty("java.utils.operation.auth.force");
     }
 
-    @RequestMapping(value = "/lotl", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseMessage lotl() throws IOException, ParserConfigurationException, SAXException {
+    @RequestMapping(value = "/lotlobj", produces = MediaType.APPLICATION_JSON_VALUE)
+    public LotlResponse lotlObj() {
+        LotlResponse response = new LotlResponse();
+        parserMutex.enter();
+        ListOfTrustedLists lotl =
+                this.applicationContext.getBean("euTLParser", EuTLParser.class).getListOfTrustedLists();
+        parserMutex.leave();
 
-        String response = Util.getResponseFromUrl(env.getProperty("dss.europa.tl.lotl_url"));
+        response.setListOfTrustedLists(lotl);
+        response.setResponseType("LOTL");
+        response.setStatus(HttpStatus.OK.value());
 
-        ResponseMessage responseMessage = new ResponseMessage(0, null, authMode, "FILE", response);
-
-        if (authMode.equalsIgnoreCase("server") || authMode.equalsIgnoreCase("both")) {
-            String filename = "lotl_" + System.currentTimeMillis() + ".xml";
-            File rootTempFolder = new File(System.getProperty("java.io.tmpdir"));
-            File tslCache = new File(rootTempFolder, "dss-tsl-loader");
-            File tmpFile = new File(tslCache,filename);
-            if (!tmpFile.createNewFile())
-                throw new IOException();
-
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(response);
-            writer.close();
-
-            TrustedListsCertificateSource trustedListsCertificateSource = new TrustedListsCertificateSource();
-            job.setTrustedListCertificateSource(trustedListsCertificateSource);
-            job.onlineRefresh();
-            certificateVerifier.setTrustedCertSources(trustedListsCertificateSource);
-
-            SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(new FileDocument(filename));
-
-            validator.setCertificateVerifier(certificateVerifier);
-
-            Reports reports = validator.validateDocument();
-            SimpleReport simpleReport = reports.getSimpleReport();
-
-            Indication indication = simpleReport.getIndication(simpleReport.getFirstSignatureId());
-            if (!tmpFile.delete())
-                throw new IOException();
-
-            if (!indication.equals(Indication.TOTAL_PASSED) && !indication.equals(Indication.PASSED))
-                responseMessage.setStatus(1);
-            else
-                responseMessage.setStatus(0);
-
-            responseMessage.setIndication(indication.name());
-        }
-
-        return responseMessage;
+        return response;
     }
 
-    @RequestMapping(value = "/tl/{countryCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseMessage tl(@PathVariable String countryCode) throws IOException, ParserConfigurationException, SAXException {
-
-        ResponseMessage responseMessage = new ResponseMessage(0,null,authMode,"FILE",null);
-        String response = Util.getResponseFromUrl(env.getProperty("dss.europa.tl.lotl_url"));
-        DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        InputStream inputStream = IOUtils.toInputStream(response);
-        Document doc = db.parse(inputStream);
-        doc.getDocumentElement().normalize();
-        inputStream.close();
-
-        Element schemeInformation = (Element) doc.getElementsByTagName("SchemeInformation").item(0);
-        Element pointersToOtherTSL = (Element) schemeInformation.getElementsByTagName("PointersToOtherTSL").item(0);
-        NodeList otherTslPointers = pointersToOtherTSL.getChildNodes();
-
-        for(int i = 0; i < otherTslPointers.getLength(); i++)
-        {
-            if (otherTslPointers.item(i).getNodeType() != Node.ELEMENT_NODE)
-                continue;
-            Element pointer = (Element) otherTslPointers.item(i);
-            Element additionalInformation = (Element) pointer.getElementsByTagName("AdditionalInformation").item(0);
-            NodeList otherInformationList = additionalInformation.getChildNodes();
-            for (int j = 0; j < otherInformationList.getLength();j++)
-            {
-                if(otherInformationList.item(j).getNodeType() != Node.ELEMENT_NODE)
-                    continue;
-                Element otherInformation = (Element) otherInformationList.item(j);
-                Element schemeTerritory = (Element) otherInformation.getElementsByTagName("SchemeTerritory").item(0);
-
-                if(schemeTerritory == null)
-                    continue;
-
-                if(countryCode.equalsIgnoreCase(schemeTerritory.getFirstChild().getNodeValue()))
-                {
-                    response =  Util.getResponseFromUrl(pointer.getElementsByTagName("TSLLocation")
-                            .item(0).getFirstChild().getNodeValue());
-                    responseMessage.setResponseBody(response);
-
-
-                    return responseMessage;
-                }
-                else
-                    break;
-            }
-
-        }
-
-        responseMessage.setStatus(404);
-        responseMessage.setResponseBody("Country code not found: " + countryCode);
-        return responseMessage;
-    }
 }

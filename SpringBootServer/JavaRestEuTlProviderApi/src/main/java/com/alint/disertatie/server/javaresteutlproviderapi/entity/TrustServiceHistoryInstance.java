@@ -20,6 +20,6 @@ public class TrustServiceHistoryInstance {
     private String serviceName;
     private List<String> digitalIds;
     private TrustServiceStatus serviceStatus;
-    private Date statusStartingTime;
+    private String statusStartingTime;
     private List<TrustServiceAdditionalType> additionalTypes;
 }

@@ -21,7 +21,7 @@ public class TrustService {
     private String serviceName;
     private List<String> digitalIds;
     private TrustServiceStatus serviceStatus;
-    private Date statusStartingTime;
+    private String statusStartingTime;
     private List<TrustServiceAdditionalType> additionalTypes;
     private List<TrustServiceHistoryInstance> serviceHistoryInstances;
 }
