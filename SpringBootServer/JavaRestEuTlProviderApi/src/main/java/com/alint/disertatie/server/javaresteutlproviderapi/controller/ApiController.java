@@ -73,7 +73,6 @@ public class ApiController {
         response.setListOfTrustedLists(lotl);
         response.setResponseType("LOTL");
         response.setStatus(HttpStatus.OK.value());
-
         return response;
     }
 
