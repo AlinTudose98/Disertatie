@@ -22,4 +22,13 @@ public class ListOfTrustedLists extends Entity{
     private String nextUpdate;
     private int historicalInformationPeriod;
     private List<OtherTSLPointer> pointersToOtherTsl;
+
+    public OtherTSLPointer getCCTSLPointer(String countryCode) {
+        for (OtherTSLPointer iter: pointersToOtherTsl) {
+            if(countryCode.equals(iter.getSchemeTerritory())) {
+                return iter;
+            }
+        }
+        return null;
+    }
 }

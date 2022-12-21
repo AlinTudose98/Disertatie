@@ -18,8 +18,17 @@ import java.util.List;
 public class TrustServiceHistoryInstance {
     private TrustServiceType serviceType;
     private String serviceName;
-    private List<String> digitalIds;
+    private List<DigitalId> digitalIds;
     private TrustServiceStatus serviceStatus;
     private String statusStartingTime;
     private List<TrustServiceAdditionalType> additionalTypes;
+
+    public TrustServiceHistoryInstance(TrustService service) {
+        this.serviceType = service.getServiceType();
+        this.serviceName = service.getServiceName();
+        this.digitalIds = service.getDigitalIds();
+        this.serviceStatus = service.getServiceStatus();
+        this.statusStartingTime = service.getStatusStartingTime();
+        this.additionalTypes = service.getAdditionalTypes();
+    }
 }

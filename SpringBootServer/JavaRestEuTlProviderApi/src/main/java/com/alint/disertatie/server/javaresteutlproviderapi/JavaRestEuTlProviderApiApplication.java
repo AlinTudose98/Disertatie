@@ -1,7 +1,10 @@
 package com.alint.disertatie.server.javaresteutlproviderapi;
 
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.OtherTSLPointer;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLParser;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLValidator;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.MemoryCell;
 import com.google.common.util.concurrent.Monitor;
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
@@ -197,7 +200,7 @@ public class JavaRestEuTlProviderApiApplication {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ConfigurableApplicationContext context =
                 SpringApplication.run(JavaRestEuTlProviderApiApplication.class, args);
 
@@ -210,8 +213,4 @@ public class JavaRestEuTlProviderApiApplication {
         parserThread.start();
 
     }
-
-
-
-
 }

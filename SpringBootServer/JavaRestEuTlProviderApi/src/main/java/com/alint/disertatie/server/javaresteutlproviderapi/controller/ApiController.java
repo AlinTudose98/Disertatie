@@ -1,9 +1,12 @@
 package com.alint.disertatie.server.javaresteutlproviderapi.controller;
 
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustedList;
 import com.alint.disertatie.server.javaresteutlproviderapi.message.LotlResponse;
 import com.alint.disertatie.server.javaresteutlproviderapi.message.ResponseMessage;
+import com.alint.disertatie.server.javaresteutlproviderapi.message.TlResponse;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLParser;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.TLParser;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.Util;
 import com.google.common.util.concurrent.Monitor;
 import eu.europa.esig.dss.enumerations.Indication;
@@ -62,16 +65,24 @@ public class ApiController {
         this.authForce = env.getProperty("java.utils.operation.auth.force");
     }
 
-    @RequestMapping(value = "/lotlobj", produces = MediaType.APPLICATION_JSON_VALUE)
-    public LotlResponse lotlObj() {
+    @RequestMapping(value = "/lotl", produces = MediaType.APPLICATION_JSON_VALUE)
+    public LotlResponse lotl() {
         LotlResponse response = new LotlResponse();
-        parserMutex.enter();
         ListOfTrustedLists lotl =
                 this.applicationContext.getBean("euTLParser", EuTLParser.class).getListOfTrustedLists();
-        parserMutex.leave();
-
         response.setListOfTrustedLists(lotl);
         response.setResponseType("LOTL");
+        response.setStatus(HttpStatus.OK.value());
+        return response;
+    }
+
+    @RequestMapping(value = "/tl/{countryCode}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public TlResponse tl(@PathVariable String countryCode) {
+        TlResponse response = new TlResponse();
+        TrustedList tl = this.applicationContext.getBean(TLParser.class).getTL(countryCode);
+
+        response.setTrustedList(tl);
+        response.setResponseType("TL");
         response.setStatus(HttpStatus.OK.value());
         return response;
     }

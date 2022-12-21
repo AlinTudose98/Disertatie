@@ -12,6 +12,7 @@ import eu.europa.esig.dss.validation.CertificateVerifier;
 import lombok.Getter;
 import lombok.Setter;
 
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,7 @@ public class EuTLValidator implements Runnable{
         return !this.doStop;
     }
 
+    @SneakyThrows
     @Override
     public void run() {
         while(keepRunning()) {

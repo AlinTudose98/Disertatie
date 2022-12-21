@@ -5,7 +5,6 @@ import com.alint.disertatie.server.javaresteutlproviderapi.enums.TrustServiceSta
 import com.alint.disertatie.server.javaresteutlproviderapi.enums.TrustServiceType;
 
 import java.util.List;
-import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,9 +18,9 @@ import lombok.Setter;
 public class TrustService {
     private TrustServiceType serviceType;
     private String serviceName;
-    private List<String> digitalIds;
+    private List<DigitalId> digitalIds;
     private TrustServiceStatus serviceStatus;
     private String statusStartingTime;
     private List<TrustServiceAdditionalType> additionalTypes;
-    private List<TrustServiceHistoryInstance> serviceHistoryInstances;
+    private List<TrustServiceHistoryInstance> serviceHistory;
 }

@@ -38,8 +38,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,30 +52,27 @@ import java.util.List;
 @Log4j2
 public class EuTLParser implements Runnable {
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").withZone(ZoneId.systemDefault());
     private final Monitor parsingMutex;
     private final Monitor validationMutex;
     private final Environment env;
     private boolean doStop = false;
     private ApplicationContext applicationContext;
-    private ListOfTrustedLists listOfTrustedLists;
-    private List<TrustedList> trustedLists;
+    private MemoryCell memoryCell;
     private long runInterval;
     private long lastVerifyTimestamp;
     private CertificateVerifier certificateVerifier;
 
     @Autowired
     public EuTLParser(ApplicationContext applicationContext, Environment env, @Qualifier("tlParserMutex") Monitor parsingMutex,
-                      @Qualifier("tlValidationMutex") Monitor validationMutex) {
+                      @Qualifier("tlValidationMutex") Monitor validationMutex, MemoryCell memoryCell) {
         this.applicationContext = applicationContext;
         this.env = env;
         this.parsingMutex = parsingMutex;
         this.validationMutex = validationMutex;
 
         this.lastVerifyTimestamp = 0;
-
-        this.listOfTrustedLists = new ListOfTrustedLists();
-        this.trustedLists = new ArrayList<>();
+        this.memoryCell = memoryCell;
     }
 
     @PostConstruct
@@ -82,8 +82,6 @@ public class EuTLParser implements Runnable {
         );
         this.certificateVerifier = this.getApplicationContext()
                 .getBean("euTLValidator", EuTLValidator.class).getCertificateVerifier();
-
-        listOfTrustedLists.setTslType(TSLType.EUListOfTheLists);
     }
 
 
@@ -95,10 +93,8 @@ public class EuTLParser implements Runnable {
         return !this.doStop;
     }
 
-    private String verifyLotl() throws IOException {
-        String lotlXmlSource = Util.getResponseFromUrl(
-                env.getProperty("dss.europa.tl.lotl_url")
-        );
+    private ListOfTrustedLists verifyLotl(String lotlXmlSource) {
+        ListOfTrustedLists listOfTrustedLists = new ListOfTrustedLists();
 
         SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(new InMemoryDocument(
                 lotlXmlSource.getBytes(StandardCharsets.UTF_8)
@@ -120,10 +116,10 @@ public class EuTLParser implements Runnable {
 
         listOfTrustedLists.setWarnings(warnings);
 
-        return lotlXmlSource;
+        return listOfTrustedLists;
     }
 
-    private void parseLotl(String lotlXmlSource) throws IOException, SAXException, ParserConfigurationException {
+    private ListOfTrustedLists parseLotl(ListOfTrustedLists listOfTrustedLists, String lotlXmlSource) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         InputStream inputStream = IOUtils.toInputStream(lotlXmlSource);
         Document doc = db.parse(inputStream);
@@ -147,66 +143,27 @@ public class EuTLParser implements Runnable {
         listOfTrustedLists.setNextUpdate(nextUpdate.getTextContent());
         listOfTrustedLists.setDistributionPoint(distributionPoints.getTextContent());
 
-        NodeList otherTslPointers = schemeInformation.getElementsByTagName("PointersToOtherTSL").item(0).getChildNodes();
-        List<OtherTSLPointer> otslp = new ArrayList<>();
+        Element pointersToOtherTSL = (Element) schemeInformation.getElementsByTagName("PointersToOtherTSL").item(0);
 
-        for (int i = 0; i < otherTslPointers.getLength(); i++)
-        {
-            if(otherTslPointers.item(i).getNodeType() != Node.ELEMENT_NODE)
-                continue;
-
-            OtherTSLPointer otslpointer = new OtherTSLPointer();
-            otslpointer.setTslType(TSLType.EUGeneric);
-
-            Element pointer = (Element) otherTslPointers.item(i);
-            Element tslLocation = (Element) pointer.getElementsByTagName("TSLLocation").item(0);
-            otslpointer.setTslLocation(tslLocation.getTextContent());
-
-            Element aditionalInformation = (Element) pointer.getElementsByTagName("AdditionalInformation").item(0);
-
-            NodeList otherInformationList = aditionalInformation.getChildNodes();
-
-            for(int j = 0; j < otherInformationList.getLength(); j ++) {
-
-                if(otherInformationList.item(j).getNodeType() != Node.ELEMENT_NODE)
-                    continue;
-
-                Element otherInformation = (Element) otherInformationList.item(j);
-
-                Element pointerSchemeTerritory = (Element) otherInformation.getElementsByTagName("SchemeTerritory").item(0);
-                if(pointerSchemeTerritory != null) {
-                    otslpointer.setSchemeTerritory(pointerSchemeTerritory.getTextContent());
-                    continue;
-                }
-
-                Element mimeType = (Element) otherInformation.getElementsByTagName("ns3:MimeType").item(0);
-                if(mimeType != null) {
-                    String mimeTypeValue = mimeType.getTextContent();
-                    if(mimeTypeValue.equals(MimeType.XML.getValue()))
-                        otslpointer.setMimeType(MimeType.XML);
-                    if(mimeTypeValue.equals(MimeType.PDF.getValue()))
-                        otslpointer.setMimeType(MimeType.PDF);
-                    continue;
-                }
-
-                Element schemeOperatorName = (Element) otherInformation.getElementsByTagName("SchemeOperatorName").item(0);
-                if (schemeOperatorName!=null) {
-                    NodeList names = schemeOperatorName.getElementsByTagName("Name");
-                    for (int k = 0; k < names.getLength(); k++) {
-                        Element name = (Element) names.item(k);
-                        if (name.getAttribute("xml:lang").equals("en")) {
-                            otslpointer.setSchemeOperatorName(name.getTextContent());
-                        }
-                    }
-                }
-            }
-
-            if (otslpointer.getMimeType() == MimeType.XML)
-                otslp.add(otslpointer);
-        }
-        listOfTrustedLists.setPointersToOtherTsl(otslp);
+        listOfTrustedLists.setPointersToOtherTsl(Util.parsePointersToOtherTsl(pointersToOtherTSL));
         listOfTrustedLists.setLastUpdated(formatter.format(LocalDateTime.now()));
 
+        return listOfTrustedLists;
+    }
+
+    public ListOfTrustedLists getListOfTrustedLists() {
+        try {
+            ListOfTrustedLists lotl = memoryCell.getLotl();
+
+            while( lotl.getLastUpdated() == null ||
+                    System.currentTimeMillis() -  Instant.from(formatter.parse(lotl.getLastUpdated())).toEpochMilli() > runInterval * 1000) {
+                Thread.sleep(5000);
+                lotl = memoryCell.getLotl();
+            }
+            return lotl;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SneakyThrows
@@ -215,14 +172,11 @@ public class EuTLParser implements Runnable {
         while (keepRunning()) {
             if (System.currentTimeMillis() - this.lastVerifyTimestamp > runInterval * 1000) {
 
-                parsingMutex.enter();
-
                 EuTLValidator instance = applicationContext.getBean("euTLValidator", EuTLValidator.class);
 
                 if (System.currentTimeMillis() - instance.getLastVerifyTimestamp() >
                         instance.getRunInterval() * 1000) {
                     log.warn("EuTLValidator.job.onlineRefresh() has not been run yet.");
-                    parsingMutex.leave();
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
@@ -234,13 +188,16 @@ public class EuTLParser implements Runnable {
                 log.info("Starting validation of LOTL");
                 this.certificateVerifier = this.applicationContext.getBean("euTLValidator", EuTLValidator.class).getCertificateVerifier();
 
-                String lotlXmlSource = this.verifyLotl();
-                this.parseLotl(lotlXmlSource);
+                String lotlXmlSource = Util.getResponseFromUrl(env.getProperty("dss.europa.tl.lotl_url"));
+                ListOfTrustedLists listOfTrustedLists =  this.verifyLotl(lotlXmlSource);
+                this.parseLotl(listOfTrustedLists, lotlXmlSource);
+
+                listOfTrustedLists.setLastUpdated(formatter.format(LocalDateTime.now()));
+                memoryCell.setLotl(listOfTrustedLists);
 
                 lastVerifyTimestamp = System.currentTimeMillis();
                 log.info("Ended validation of LOTL");
                 validationMutex.leave();
-                parsingMutex.leave();
             }
         }
     }

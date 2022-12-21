@@ -16,9 +16,11 @@ import java.util.List;
 @NoArgsConstructor
 public class TrustedList extends Entity{
     private String distributionPoint;
+    private String schemeTerritory;
     private TSLType tslType;
     private String listIssueDateTime;
     private String nextUpdate;
+    private int historicalInformationPeriod;
     private List<TrustServiceProvider> trustServiceProviders;
     private List<OtherTSLPointer> pointersToOtherTSL;
 }
