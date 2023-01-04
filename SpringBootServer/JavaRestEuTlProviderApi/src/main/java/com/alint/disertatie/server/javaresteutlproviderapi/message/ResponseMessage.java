@@ -13,4 +13,6 @@ public class ResponseMessage {
     protected int status;
     protected String responseType;
 
+    protected String message;
+
 }

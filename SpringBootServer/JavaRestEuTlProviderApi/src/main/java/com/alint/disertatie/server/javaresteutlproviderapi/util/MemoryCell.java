@@ -70,7 +70,7 @@ public class MemoryCell {
             parsingMutex.enter();
         }
         for (OtherTSLPointer iter : lotl.getPointersToOtherTsl()) {
-            if(countryCode.equals(iter.getSchemeTerritory())) {
+            if(countryCode.equalsIgnoreCase(iter.getSchemeTerritory())) {
                 found = true;
                 break;
             }
@@ -81,7 +81,7 @@ public class MemoryCell {
         }
 
         for(TrustedList iter : trustedLists) {
-            if(countryCode.equals(iter.getSchemeTerritory())) {
+            if(countryCode.equalsIgnoreCase(iter.getSchemeTerritory())) {
                 parsingMutex.leave();
                 return iter;
             }

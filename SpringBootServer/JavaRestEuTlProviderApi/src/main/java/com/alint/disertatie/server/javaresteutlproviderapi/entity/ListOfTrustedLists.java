@@ -25,7 +25,7 @@ public class ListOfTrustedLists extends Entity{
 
     public OtherTSLPointer getCCTSLPointer(String countryCode) {
         for (OtherTSLPointer iter: pointersToOtherTsl) {
-            if(countryCode.equals(iter.getSchemeTerritory())) {
+            if(countryCode.equalsIgnoreCase(iter.getSchemeTerritory())) {
                 return iter;
             }
         }

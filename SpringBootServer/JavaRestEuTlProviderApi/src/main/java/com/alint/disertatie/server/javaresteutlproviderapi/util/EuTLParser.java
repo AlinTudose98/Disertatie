@@ -145,7 +145,7 @@ public class EuTLParser implements Runnable {
 
         Element pointersToOtherTSL = (Element) schemeInformation.getElementsByTagName("PointersToOtherTSL").item(0);
 
-        listOfTrustedLists.setPointersToOtherTsl(Util.parsePointersToOtherTsl(pointersToOtherTSL));
+        listOfTrustedLists.setPointersToOtherTsl(Util.parsePointersToOtherTsl(pointersToOtherTSL, false));
         listOfTrustedLists.setLastUpdated(formatter.format(LocalDateTime.now()));
 
         return listOfTrustedLists;

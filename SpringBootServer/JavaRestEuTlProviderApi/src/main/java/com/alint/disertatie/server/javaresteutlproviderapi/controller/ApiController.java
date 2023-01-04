@@ -2,6 +2,8 @@ package com.alint.disertatie.server.javaresteutlproviderapi.controller;
 
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustedList;
+import com.alint.disertatie.server.javaresteutlproviderapi.exception.BadRequestException;
+import com.alint.disertatie.server.javaresteutlproviderapi.exception.CountryNotFoundException;
 import com.alint.disertatie.server.javaresteutlproviderapi.message.LotlResponse;
 import com.alint.disertatie.server.javaresteutlproviderapi.message.ResponseMessage;
 import com.alint.disertatie.server.javaresteutlproviderapi.message.TlResponse;
@@ -79,11 +81,29 @@ public class ApiController {
     @RequestMapping(value = "/tl/{countryCode}",produces = MediaType.APPLICATION_JSON_VALUE)
     public TlResponse tl(@PathVariable String countryCode) {
         TlResponse response = new TlResponse();
-        TrustedList tl = this.applicationContext.getBean(TLParser.class).getTL(countryCode);
+        try {
+            TrustedList tl = this.applicationContext.getBean("TLParser", TLParser.class).getTL(countryCode);
 
-        response.setTrustedList(tl);
-        response.setResponseType("TL");
-        response.setStatus(HttpStatus.OK.value());
+            response.setTrustedList(tl);
+            response.setResponseType("TL");
+            response.setStatus(HttpStatus.OK.value());
+        }
+        catch (BadRequestException e)
+        {
+            log.error(e.getMessage());
+            response.setMessage(e.getMessage());
+            response.setTrustedList(null);
+            response.setResponseType("Error");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+        }
+        catch (CountryNotFoundException e)
+        {
+            log.error(e.getMessage());
+            response.setTrustedList(null);
+            response.setResponseType("Error");
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+        }
+
         return response;
     }
 

@@ -3,12 +3,11 @@ package com.alint.disertatie.server.javaresteutlproviderapi.util;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.OtherTSLPointer;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustedList;
-import com.alint.disertatie.server.javaresteutlproviderapi.enums.MimeType;
 import com.alint.disertatie.server.javaresteutlproviderapi.enums.TSLType;
 import com.alint.disertatie.server.javaresteutlproviderapi.exception.BadRequestException;
 import com.alint.disertatie.server.javaresteutlproviderapi.exception.CountryNotFoundException;
-import com.alint.disertatie.server.javaresteutlproviderapi.exception.CustomException;
 import com.alint.disertatie.server.javaresteutlproviderapi.exception.TrustedListNotParsedException;
+
 import eu.europa.esig.dss.enumerations.Indication;
 import eu.europa.esig.dss.enumerations.SubIndication;
 import eu.europa.esig.dss.jaxb.object.Message;
@@ -17,30 +16,30 @@ import eu.europa.esig.dss.simplereport.SimpleReport;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
 import eu.europa.esig.dss.validation.reports.Reports;
+
 import lombok.extern.log4j.Log4j2;
+
 import org.apache.commons.io.IOUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -104,28 +103,32 @@ public class TLParser {
         return trustedList;
     }
 
-    private TrustedList parseTrustedList(TrustedList trustedList, String tlXmlSource) throws ParserConfigurationException, IOException, SAXException {
+    private TrustedList parseTrustedList(TrustedList trustedList, String tlXmlSource,boolean nsMode) throws ParserConfigurationException, IOException, SAXException {
+        String ns = "";
+        if (nsMode)
+            ns = "tsl:";
+
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         InputStream inputStream = IOUtils.toInputStream(tlXmlSource,StandardCharsets.UTF_8);
         Document doc = db.parse(inputStream);
         doc.getDocumentElement().normalize();
         inputStream.close();
 
-        Element schemeInformation = (Element) doc.getElementsByTagName("SchemeInformation").item(0);
+        Element schemeInformation = (Element) doc.getElementsByTagName(ns + "SchemeInformation").item(0);
 
-        Element distributionPoint = (Element) schemeInformation.getElementsByTagName("DistributionPoints").item(0);
+        Element distributionPoint = (Element) schemeInformation.getElementsByTagName(ns + "DistributionPoints").item(0);
         if(distributionPoint == null)
             log.warn("Found trusted list without distribution point!");
         if(distributionPoint != null) {
-            distributionPoint = (Element) distributionPoint.getElementsByTagName("URI").item(0);
+            distributionPoint = (Element) distributionPoint.getElementsByTagName(ns + "URI").item(0);
             trustedList.setDistributionPoint(distributionPoint.getTextContent());
         }
 
-        Element schemeTerritory = (Element) schemeInformation.getElementsByTagName("SchemeTerritory").item(0);
-        Element listIssueDateTime = (Element) schemeInformation.getElementsByTagName("ListIssueDateTime").item(0);
-        Element historicalInformationPeriod = (Element) schemeInformation.getElementsByTagName("HistoricalInformationPeriod").item(0);
-        Element nextUpdate = (Element) schemeInformation.getElementsByTagName("NextUpdate").item(0);
-        nextUpdate = (Element) nextUpdate.getElementsByTagName("dateTime").item(0);
+        Element schemeTerritory = (Element) schemeInformation.getElementsByTagName(ns + "SchemeTerritory").item(0);
+        Element listIssueDateTime = (Element) schemeInformation.getElementsByTagName(ns + "ListIssueDateTime").item(0);
+        Element historicalInformationPeriod = (Element) schemeInformation.getElementsByTagName(ns + "HistoricalInformationPeriod").item(0);
+        Element nextUpdate = (Element) schemeInformation.getElementsByTagName(ns + "NextUpdate").item(0);
+        nextUpdate = (Element) nextUpdate.getElementsByTagName(ns + "dateTime").item(0);
         if(nextUpdate == null) {
             log.warn("Found trusted list with no next update field.");
             trustedList.setNextUpdate(null);
@@ -140,11 +143,11 @@ public class TLParser {
         trustedList.setHistoricalInformationPeriod(Integer.parseInt(historicalInformationPeriod.getTextContent()));
         trustedList.setTslType(TSLType.EUGeneric);
 
-        Element pointersToOtherTsl = (Element) schemeInformation.getElementsByTagName("PointersToOtherTSL").item(0);
-        trustedList.setPointersToOtherTSL(Util.parsePointersToOtherTsl(pointersToOtherTsl));
+        Element pointersToOtherTsl = (Element) schemeInformation.getElementsByTagName(ns + "PointersToOtherTSL").item(0);
+        trustedList.setPointersToOtherTSL(Util.parsePointersToOtherTsl(pointersToOtherTsl, nsMode));
 
-        Element trustServiceProvidersList = (Element) doc.getElementsByTagName("TrustServiceProviderList").item(0);
-        trustedList.setTrustServiceProviders(Util.parseTrustServiceProviders(trustServiceProvidersList));
+        Element trustServiceProvidersList = (Element) doc.getElementsByTagName(ns + "TrustServiceProviderList").item(0);
+        trustedList.setTrustServiceProviders(Util.parseTrustServiceProviders(trustServiceProvidersList, nsMode));
 
         return trustedList;
     }
@@ -166,10 +169,14 @@ public class TLParser {
                 throw new CountryNotFoundException("Country not found for ISO CODE: " + countryCode);
             }
 
+            boolean nsMode = false;
+            if(countryCode.equalsIgnoreCase("HU"))
+                nsMode=true;
+
             String tlXmlSource = Util.getResponseFromUrl(desiredPointer.getTslLocation());
             TrustedList trustedList = this.verifyTrustedList(tlXmlSource);
             log.info("Verified trusted list for country code " + countryCode);
-            this.parseTrustedList(trustedList, tlXmlSource);
+            this.parseTrustedList(trustedList, tlXmlSource, nsMode);
             log.info("Parsed trusted list for country code " + countryCode);
             trustedList.setLastUpdated(formatter.format(LocalDateTime.now()));
             memoryCell.addTL(trustedList);

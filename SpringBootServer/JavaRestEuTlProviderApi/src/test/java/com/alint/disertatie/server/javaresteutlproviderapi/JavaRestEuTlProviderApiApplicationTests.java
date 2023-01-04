@@ -37,7 +37,7 @@ class JavaRestEuTlProviderApiApplicationTests {
         Element tspInformation = (Element) trustServiceProvider.getElementsByTagName("TSPInformation").item(0);
 
         TrustServiceProvider tsp = new TrustServiceProvider();
-        Util.parseTSPInformation(tspInformation, tsp);
+        Util.parseTSPInformation(tspInformation, tsp, false);
 
         assertEquals("A-Trust Gesellschaft für Sicherheitssysteme im elektronischen Datenverkehr GmbH",tsp.getName());
         assertEquals("A-Trust Ges. für Sicherheitssysteme im elektr. Datenverkehr GmbH", tsp.getTradeName());
@@ -59,9 +59,10 @@ class JavaRestEuTlProviderApiApplicationTests {
         Element trustServiceProvider = (Element) trustServiceProvidersList.getElementsByTagName("TrustServiceProvider").item(0);
         Element tspServices = (Element) trustServiceProvider.getElementsByTagName("TSPServices").item(0);
 
+
         TrustServiceProvider tsp = new TrustServiceProvider();
-        Util.parseTSPInformation(trustServiceProvider, tsp);
-        tsp.setTrustServices(Util.parseTrustServices(tspServices));
+        Util.parseTSPInformation(trustServiceProvider, tsp,false);
+        tsp.setTrustServices(Util.parseTrustServices(tspServices,false));
 
         System.out.println(tsp);
     }

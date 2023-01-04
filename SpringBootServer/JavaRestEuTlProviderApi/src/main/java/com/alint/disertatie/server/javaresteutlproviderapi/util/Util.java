@@ -105,7 +105,11 @@ public class Util {
         return response.toString();
     }
 
-    public static List<OtherTSLPointer> parsePointersToOtherTsl(Element pointersToOtherTsl) {
+    public static List<OtherTSLPointer> parsePointersToOtherTsl(Element pointersToOtherTsl, boolean nsMode) {
+        String ns ="";
+        if(nsMode)
+            ns="tsl:";
+
         NodeList otherTslPointers = pointersToOtherTsl.getChildNodes();
 
         List<OtherTSLPointer> otslpointers = new ArrayList<>();
@@ -118,10 +122,10 @@ public class Util {
             otslpointer.setTslType(TSLType.EUListOfTheLists);
 
             Element pointer = (Element) otherTslPointers.item(i);
-            Element tslLocation = (Element) pointer.getElementsByTagName("TSLLocation").item(0);
+            Element tslLocation = (Element) pointer.getElementsByTagName(ns + "TSLLocation").item(0);
             otslpointer.setTslLocation(tslLocation.getTextContent());
 
-            Element aditionalInformation = (Element) pointer.getElementsByTagName("AdditionalInformation").item(0);
+            Element aditionalInformation = (Element) pointer.getElementsByTagName(ns + "AdditionalInformation").item(0);
 
             NodeList otherInformationList = aditionalInformation.getChildNodes();
 
@@ -132,13 +136,13 @@ public class Util {
 
                 Element otherInformation = (Element) otherInformationList.item(j);
 
-                Element pointerSchemeTerritory = (Element) otherInformation.getElementsByTagName("SchemeTerritory").item(0);
+                Element pointerSchemeTerritory = (Element) otherInformation.getElementsByTagName(ns + "SchemeTerritory").item(0);
                 if (pointerSchemeTerritory != null) {
                     otslpointer.setSchemeTerritory(pointerSchemeTerritory.getTextContent());
                     continue;
                 }
 
-                Element mimeType = (Element) otherInformation.getElementsByTagName("ns3:MimeType").item(0);
+                Element mimeType = (Element) otherInformation.getElementsByTagName(ns + "ns3:MimeType").item(0);
                 if (mimeType != null) {
                     String mimeTypeValue = mimeType.getTextContent();
                     if (mimeTypeValue.equals(MimeType.XML.getValue()))
@@ -148,9 +152,9 @@ public class Util {
                     continue;
                 }
 
-                Element schemeOperatorName = (Element) otherInformation.getElementsByTagName("SchemeOperatorName").item(0);
+                Element schemeOperatorName = (Element) otherInformation.getElementsByTagName(ns + "SchemeOperatorName").item(0);
                 if (schemeOperatorName != null) {
-                    NodeList names = schemeOperatorName.getElementsByTagName("Name");
+                    NodeList names = schemeOperatorName.getElementsByTagName(ns + "Name");
                     for (int k = 0; k < names.getLength(); k++) {
                         Element name = (Element) names.item(k);
                         if (name.getAttribute("xml:lang").equals("en")) {
@@ -166,9 +170,13 @@ public class Util {
         return otslpointers;
     }
 
-    public static void parseTSPInformation(Element tspInformation, TrustServiceProvider tsp) {
-        Element tspName = (Element) tspInformation.getElementsByTagName("TSPName").item(0);
-        NodeList names = tspName.getElementsByTagName("Name");
+    public static void parseTSPInformation(Element tspInformation, TrustServiceProvider tsp, boolean nsMode) {
+        String ns = "";
+        if(nsMode)
+            ns="tsl:";
+
+        Element tspName = (Element) tspInformation.getElementsByTagName(ns + "TSPName").item(0);
+        NodeList names = tspName.getElementsByTagName(ns + "Name");
         for (int i = 0; i < names.getLength(); i++) {
             Element name = (Element) names.item(i);
             if (name.getAttribute("xml:lang").equals("en")) {
@@ -177,13 +185,13 @@ public class Util {
             }
         }
 
-        Element tspTradeName = (Element) tspInformation.getElementsByTagName("TSPTradeName").item(0);
+        Element tspTradeName = (Element) tspInformation.getElementsByTagName(ns + "TSPTradeName").item(0);
         if(tspTradeName == null) {
             log.warn("Found Trust Service Provider with null Trade Name.");
             tsp.setTradeName(null);
         }
         else {
-            NodeList tradeNames = tspTradeName.getElementsByTagName("Name");
+            NodeList tradeNames = tspTradeName.getElementsByTagName(ns + "Name");
             for (int i = 0; i < names.getLength(); i++) {
                 Element name = (Element) tradeNames.item(i);
                 if (name.getAttribute("xml:lang").equals("en")) {
@@ -193,14 +201,14 @@ public class Util {
             }
         }
 
-        Element tspAddresses = (Element) tspInformation.getElementsByTagName("TSPAddress").item(0);
-        Element tspPostalAddresses = (Element) tspAddresses.getElementsByTagName("PostalAddresses").item(0);
-        Element tspElectronicAddresses = (Element) tspAddresses.getElementsByTagName("ElectronicAddress").item(0);
+        Element tspAddresses = (Element) tspInformation.getElementsByTagName(ns + "TSPAddress").item(0);
+        Element tspPostalAddresses = (Element) tspAddresses.getElementsByTagName(ns + "PostalAddresses").item(0);
+        Element tspElectronicAddresses = (Element) tspAddresses.getElementsByTagName(ns + "ElectronicAddress").item(0);
 
         List<PostalAddress> postalAddresses = new ArrayList<>();
         List<String> emailAddresses = new ArrayList<>();
 
-        NodeList tspPostalAddressesList = tspPostalAddresses.getElementsByTagName("PostalAddress");
+        NodeList tspPostalAddressesList = tspPostalAddresses.getElementsByTagName(ns + "PostalAddress");
         for (int i = 0; i < tspPostalAddressesList.getLength(); i++) {
             if (tspPostalAddressesList.item(i).getNodeType() != Node.ELEMENT_NODE)
                 continue;
@@ -208,15 +216,15 @@ public class Util {
             if (!address.getAttribute("xml:lang").equalsIgnoreCase("en"))
                 continue;
             PostalAddress postalAddress = new PostalAddress();
-            postalAddress.setPostalCode(address.getElementsByTagName("StreetAddress").item(0).getTextContent());
-            postalAddress.setLocality(address.getElementsByTagName("Locality").item(0).getTextContent());
-            postalAddress.setCountryName(address.getElementsByTagName("CountryName").item(0).getTextContent());
-            postalAddress.setStreetAddress(address.getElementsByTagName("StreetAddress").item(0).getTextContent());
+            postalAddress.setPostalCode(address.getElementsByTagName(ns + "StreetAddress").item(0).getTextContent());
+            postalAddress.setLocality(address.getElementsByTagName(ns + "Locality").item(0).getTextContent());
+            postalAddress.setCountryName(address.getElementsByTagName(ns + "CountryName").item(0).getTextContent());
+            postalAddress.setStreetAddress(address.getElementsByTagName(ns + "StreetAddress").item(0).getTextContent());
 
             postalAddresses.add(postalAddress);
         }
 
-        NodeList tspElectronicAddressesList = tspElectronicAddresses.getElementsByTagName("URI");
+        NodeList tspElectronicAddressesList = tspElectronicAddresses.getElementsByTagName(ns + "URI");
         for(int j=0; j< tspElectronicAddressesList.getLength(); j++) {
             if (tspElectronicAddressesList.item(j).getNodeType() != Node.ELEMENT_NODE)
                 continue;
@@ -228,40 +236,48 @@ public class Util {
         tsp.setElectronicAddresses(emailAddresses);
     }
 
-    public static List<TrustServiceHistoryInstance> parseTrustServiceHistory(Element serviceHistory) {
+    public static List<TrustServiceHistoryInstance> parseTrustServiceHistory(Element serviceHistory, boolean nsMode) {
+        String ns = "";
+        if(nsMode)
+            ns="tsl:";
+
         if (serviceHistory == null)
             return null;
 
         List<TrustServiceHistoryInstance> history = new ArrayList<>();
 
-        NodeList historyInstances = serviceHistory.getElementsByTagName("ServiceHistoryInstance");
+        NodeList historyInstances = serviceHistory.getElementsByTagName(ns + "ServiceHistoryInstance");
         for(int i=0; i< historyInstances.getLength(); i++) {
             if(historyInstances.item(i).getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
             Element historyInstance = (Element) historyInstances.item(i);
             TrustServiceHistoryInstance trustServiceHistoryInstance = new TrustServiceHistoryInstance(
-                    parseTrustService(historyInstance)
+                    parseTrustService(historyInstance, nsMode)
             );
             history.add(trustServiceHistoryInstance);
         }
 
         return history;
     }
-    public static TrustService parseTrustService(Element service) {
+    public static TrustService parseTrustService(Element service, boolean nsMode) {
+        String ns="";
+        if(nsMode)
+            ns="tsl:";
+
         TrustService trustService = new TrustService();
 
-        Element serviceTypeIdentifier = (Element) service.getElementsByTagName("ServiceTypeIdentifier").item(0);
+        Element serviceTypeIdentifier = (Element) service.getElementsByTagName(ns + "ServiceTypeIdentifier").item(0);
         trustService.setServiceType(UriToTypeMap.get(serviceTypeIdentifier.getTextContent()));
 
-        Element serviceStatus = (Element)service.getElementsByTagName("ServiceStatus").item(0);
+        Element serviceStatus = (Element)service.getElementsByTagName(ns + "ServiceStatus").item(0);
         trustService.setServiceStatus(UriToStatusMap.get(serviceStatus.getTextContent()));
 
-        Element statusStartingTime = (Element) service.getElementsByTagName("StatusStartingTime").item(0);
+        Element statusStartingTime = (Element) service.getElementsByTagName(ns + "StatusStartingTime").item(0);
         trustService.setStatusStartingTime(statusStartingTime.getTextContent());
 
-        Element serviceName = (Element) service.getElementsByTagName("ServiceName").item(0);
-        NodeList serviceNames = serviceName.getElementsByTagName("Name");
+        Element serviceName = (Element) service.getElementsByTagName(ns + "ServiceName").item(0);
+        NodeList serviceNames = serviceName.getElementsByTagName(ns + "Name");
         for (int i=0; i < serviceNames.getLength(); i++) {
             if(serviceNames.item(i).getNodeType() != Node.ELEMENT_NODE)
                 continue;
@@ -274,16 +290,16 @@ public class Util {
         }
 
         List<DigitalId> serviceDigitalIds = new ArrayList<>();
-        Element digitalIdentity = (Element) service.getElementsByTagName("ServiceDigitalIdentity").item(0);
-        NodeList digitalIds = digitalIdentity.getElementsByTagName("DigitalId");
+        Element digitalIdentity = (Element) service.getElementsByTagName(ns + "ServiceDigitalIdentity").item(0);
+        NodeList digitalIds = digitalIdentity.getElementsByTagName(ns + "DigitalId");
         for(int i=0; i< digitalIds.getLength(); i++) {
             if(digitalIds.item(i).getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
             Element digitalId = (Element) digitalIds.item(i);
-            Element X509Certificate = (Element) digitalId.getElementsByTagName("X509Certificate").item(0);
-            Element X509SubjectName = (Element) digitalId.getElementsByTagName("X509SubjectName").item(0);
-            Element X509SKI         = (Element) digitalId.getElementsByTagName("X509SKI").item(0);
+            Element X509Certificate = (Element) digitalId.getElementsByTagName(ns + "X509Certificate").item(0);
+            Element X509SubjectName = (Element) digitalId.getElementsByTagName(ns + "X509SubjectName").item(0);
+            Element X509SKI         = (Element) digitalId.getElementsByTagName(ns + "X509SKI").item(0);
 
             if(X509Certificate!=null)
                 serviceDigitalIds.add(new DigitalId(X509Certificate.getTextContent(),"X509Certificate"));
@@ -296,18 +312,18 @@ public class Util {
 
         List<TrustServiceAdditionalType> additionalTypes = new ArrayList<>();
 
-        Element serviceInformationExtensions = (Element) service.getElementsByTagName("ServiceInformationExtensions").item(0);
+        Element serviceInformationExtensions = (Element) service.getElementsByTagName(ns + "ServiceInformationExtensions").item(0);
         if (serviceInformationExtensions!=null) {
-            NodeList extensions = serviceInformationExtensions.getElementsByTagName("Extension");
+            NodeList extensions = serviceInformationExtensions.getElementsByTagName(ns + "Extension");
             for (int i = 0; i < extensions.getLength(); i++) {
                 if (extensions.item(i).getNodeType() != Node.ELEMENT_NODE)
                     continue;
 
                 Element extension = (Element) extensions.item(i);
-                extension = (Element) extension.getElementsByTagName("AdditionalServiceInformation").item(0);
+                extension = (Element) extension.getElementsByTagName(ns + "AdditionalServiceInformation").item(0);
                 if (extension == null)
                     continue;
-                extension = (Element) extension.getElementsByTagName("URI").item(0);
+                extension = (Element) extension.getElementsByTagName(ns + "URI").item(0);
 
                 additionalTypes.add(UriToAdditionalTypeMap.get(extension.getTextContent()));
             }
@@ -318,18 +334,22 @@ public class Util {
         return trustService;
     }
 
-    public static List<TrustService> parseTrustServices(Element trustServices) {
+    public static List<TrustService> parseTrustServices(Element trustServices, boolean nsMode) {
+        String ns="";
+        if(nsMode)
+            ns="tsl:";
+
         List<TrustService> trustServicesList = new ArrayList<>();
-        NodeList trustServicesNodeList = trustServices.getElementsByTagName("TSPService");
+        NodeList trustServicesNodeList = trustServices.getElementsByTagName(ns + "TSPService");
         for (int i = 0; i < trustServicesNodeList.getLength(); i++) {
             if(trustServicesNodeList.item(i).getNodeType()!= Node.ELEMENT_NODE)
                 continue;
 
             Element service = (Element) trustServicesNodeList.item(i);
-            Element serviceInformation = (Element) service.getElementsByTagName("ServiceInformation").item(0);
-            Element serviceHistory = (Element) service.getElementsByTagName("ServiceHistory").item(0);
-            TrustService trustService = parseTrustService(serviceInformation);
-            trustService.setServiceHistory(parseTrustServiceHistory(serviceHistory));
+            Element serviceInformation = (Element) service.getElementsByTagName(ns + "ServiceInformation").item(0);
+            Element serviceHistory = (Element) service.getElementsByTagName(ns + "ServiceHistory").item(0);
+            TrustService trustService = parseTrustService(serviceInformation, nsMode);
+            trustService.setServiceHistory(parseTrustServiceHistory(serviceHistory, nsMode));
 
             trustServicesList.add(trustService);
         }
@@ -337,9 +357,13 @@ public class Util {
         return trustServicesList;
     }
 
-    public static List<TrustServiceProvider> parseTrustServiceProviders(Element trustServiceProviderList) {
+    public static List<TrustServiceProvider> parseTrustServiceProviders(Element trustServiceProviderList,boolean nsMode) {
+        String ns = "";
+        if (nsMode)
+            ns = "tsl:";
+
         List<TrustServiceProvider> trustServiceProvidersList = new ArrayList<>();
-        NodeList trustServiceProviders = trustServiceProviderList.getElementsByTagName("TrustServiceProvider");
+        NodeList trustServiceProviders = trustServiceProviderList.getElementsByTagName(ns + "TrustServiceProvider");
 
         for (int i = 0; i < trustServiceProviders.getLength(); i++) {
             if (trustServiceProviders.item(i).getNodeType() != Node.ELEMENT_NODE)
@@ -348,11 +372,11 @@ public class Util {
             Element trustServiceProvider = (Element) trustServiceProviders.item(i);
 
             TrustServiceProvider tsp = new TrustServiceProvider();
-            Element tspInformation = (Element) trustServiceProvider.getElementsByTagName("TSPInformation").item(0);
-            Element tspServices = (Element) trustServiceProvider.getElementsByTagName("TSPServices").item(0);
+            Element tspInformation = (Element) trustServiceProvider.getElementsByTagName(ns + "TSPInformation").item(0);
+            Element tspServices = (Element) trustServiceProvider.getElementsByTagName(ns + "TSPServices").item(0);
 
-            parseTSPInformation(tspInformation, tsp);
-            tsp.setTrustServices(parseTrustServices(tspServices));
+            parseTSPInformation(tspInformation, tsp, nsMode);
+            tsp.setTrustServices(parseTrustServices(tspServices, nsMode));
 
             trustServiceProvidersList.add(tsp);
         }
