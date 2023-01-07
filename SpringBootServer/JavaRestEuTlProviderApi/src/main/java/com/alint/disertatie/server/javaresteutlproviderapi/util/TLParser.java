@@ -1,5 +1,6 @@
 package com.alint.disertatie.server.javaresteutlproviderapi.util;
 
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.CustomMessage;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.OtherTSLPointer;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustedList;
@@ -40,6 +41,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -98,7 +100,11 @@ public class TLParser {
         else
             trustedList.setSubIndication(null);
 
-        trustedList.setWarnings(warnings);
+        trustedList.setWarnings(new ArrayList<>());
+        for(Message iter: warnings) {
+          trustedList.getWarnings().add(new CustomMessage(iter.getKey(),iter.getValue()));
+        }
+        //trustedList.setWarnings(warnings);
 
         return trustedList;
     }

@@ -1,4 +1,4 @@
-package com.alint.disertatie.server.javaresteutlproviderapi.entity;
+package com.alint.disertatie.javaeutlclient.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

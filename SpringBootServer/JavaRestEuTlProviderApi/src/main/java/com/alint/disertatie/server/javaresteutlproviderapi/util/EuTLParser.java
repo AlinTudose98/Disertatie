@@ -1,11 +1,8 @@
 package com.alint.disertatie.server.javaresteutlproviderapi.util;
 
 
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.CustomMessage;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.OtherTSLPointer;
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustedList;
-import com.alint.disertatie.server.javaresteutlproviderapi.enums.MimeType;
-import com.alint.disertatie.server.javaresteutlproviderapi.enums.TSLType;
 import com.google.common.util.concurrent.Monitor;
 import eu.europa.esig.dss.enumerations.Indication;
 import eu.europa.esig.dss.enumerations.SubIndication;
@@ -27,8 +24,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
@@ -114,7 +109,10 @@ public class EuTLParser implements Runnable {
         else
             listOfTrustedLists.setSubIndication(null);
 
-        listOfTrustedLists.setWarnings(warnings);
+        listOfTrustedLists.setWarnings(new ArrayList<>());
+        for(Message iter: warnings) {
+            listOfTrustedLists.getWarnings().add(new CustomMessage(iter.getKey(),iter.getValue()));
+        }
 
         return listOfTrustedLists;
     }
