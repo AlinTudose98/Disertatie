@@ -3,10 +3,7 @@ package com.alint.disertatie.javaeutlclient.model.entity;
 import com.alint.disertatie.javaeutlclient.model.enums.TrustServiceAdditionalType;
 import com.alint.disertatie.javaeutlclient.model.enums.TrustServiceStatus;
 import com.alint.disertatie.javaeutlclient.model.enums.TrustServiceType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class TrustServiceHistoryInstance {
     private TrustServiceType serviceType;
     private String serviceName;

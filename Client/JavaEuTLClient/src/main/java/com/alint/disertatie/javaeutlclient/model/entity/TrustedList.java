@@ -1,10 +1,7 @@
 package com.alint.disertatie.javaeutlclient.model.entity;
 
 import com.alint.disertatie.javaeutlclient.model.enums.TSLType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,6 +9,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class TrustedList extends Entity{
     private String distributionPoint;
     private String schemeTerritory;

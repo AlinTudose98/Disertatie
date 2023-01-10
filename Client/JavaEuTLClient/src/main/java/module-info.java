@@ -1,18 +1,19 @@
 module com.alint.disertatie.javaeutlclient {
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.web;
-
-    requires org.controlsfx.controls;
-    requires com.dlsc.formsfx;
-    requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.bootstrapfx.core;
-    requires eu.hansolo.tilesfx;
     requires lombok;
-    requires jpms_dss_jaxb_parsers;
+    requires com.fasterxml.jackson.databind;
+    requires org.kordamp.bootstrapfx.core;
+
 
     opens com.alint.disertatie.javaeutlclient to javafx.fxml;
+    opens com.alint.disertatie.javaeutlclient.controller to javafx.fxml;
+    opens com.alint.disertatie.javaeutlclient.model.entity to com.fasterxml.jackson.databind;
+    opens com.alint.disertatie.javaeutlclient.model.enums to com.fasterxml.jackson.databind;
+    opens com.alint.disertatie.javaeutlclient.model.message to com.fasterxml.jackson.databind;
     exports com.alint.disertatie.javaeutlclient;
     exports com.alint.disertatie.javaeutlclient.controller;
-    opens com.alint.disertatie.javaeutlclient.controller to javafx.fxml;
+    exports com.alint.disertatie.javaeutlclient.model.entity to com.fasterxml.jackson.databind;
+    exports com.alint.disertatie.javaeutlclient.model.enums to com.fasterxml.jackson.databind;
+    exports com.alint.disertatie.javaeutlclient.model.message to com.fasterxml.jackson.databind;
 }
