@@ -8,12 +8,12 @@ module com.alint.disertatie.javaeutlclient {
 
     opens com.alint.disertatie.javaeutlclient to javafx.fxml;
     opens com.alint.disertatie.javaeutlclient.controller to javafx.fxml;
-    opens com.alint.disertatie.javaeutlclient.model.entity to com.fasterxml.jackson.databind;
-    opens com.alint.disertatie.javaeutlclient.model.enums to com.fasterxml.jackson.databind;
-    opens com.alint.disertatie.javaeutlclient.model.message to com.fasterxml.jackson.databind;
+    opens com.alint.disertatie.client.eutlwebview.model.entity to com.fasterxml.jackson.databind;
+    opens com.alint.disertatie.client.eutlwebview.model.enums to com.fasterxml.jackson.databind;
+    opens com.alint.disertatie.client.eutlwebview.model.message to com.fasterxml.jackson.databind;
     exports com.alint.disertatie.javaeutlclient;
     exports com.alint.disertatie.javaeutlclient.controller;
-    exports com.alint.disertatie.javaeutlclient.model.entity to com.fasterxml.jackson.databind;
-    exports com.alint.disertatie.javaeutlclient.model.enums to com.fasterxml.jackson.databind;
-    exports com.alint.disertatie.javaeutlclient.model.message to com.fasterxml.jackson.databind;
+    exports com.alint.disertatie.client.eutlwebview.model.entity to com.fasterxml.jackson.databind;
+    exports com.alint.disertatie.client.eutlwebview.model.enums to com.fasterxml.jackson.databind;
+    exports com.alint.disertatie.client.eutlwebview.model.message to com.fasterxml.jackson.databind;
 }

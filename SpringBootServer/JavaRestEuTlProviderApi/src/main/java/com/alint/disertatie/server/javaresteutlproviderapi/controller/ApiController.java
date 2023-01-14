@@ -5,43 +5,22 @@ import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustedList;
 import com.alint.disertatie.server.javaresteutlproviderapi.exception.BadRequestException;
 import com.alint.disertatie.server.javaresteutlproviderapi.exception.CountryNotFoundException;
 import com.alint.disertatie.server.javaresteutlproviderapi.message.LotlResponse;
-import com.alint.disertatie.server.javaresteutlproviderapi.message.ResponseMessage;
 import com.alint.disertatie.server.javaresteutlproviderapi.message.TlResponse;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLParser;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.TLParser;
-import com.alint.disertatie.server.javaresteutlproviderapi.util.Util;
 import com.google.common.util.concurrent.Monitor;
-import eu.europa.esig.dss.enumerations.Indication;
-import eu.europa.esig.dss.model.FileDocument;
-import eu.europa.esig.dss.simplereport.SimpleReport;
-import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.tsl.job.TLValidationJob;
 import eu.europa.esig.dss.validation.CertificateVerifier;
-import eu.europa.esig.dss.validation.SignedDocumentValidator;
-import eu.europa.esig.dss.validation.reports.Reports;
 import lombok.extern.log4j.Log4j2;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
 
 @RestController
 @Log4j2

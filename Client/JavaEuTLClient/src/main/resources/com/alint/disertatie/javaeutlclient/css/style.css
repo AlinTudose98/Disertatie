@@ -3,8 +3,8 @@
 }
 
 .backgroundContainer {
-    -fx-background-image: url("../img/mainBackground.jpg");
-    -fx-background-repeat: stretch;
+    -fx-background-image: url("../img/4k-european-union-flag-silk-flag-europe-national-symbols.jpg");
+    -fx-background-repeat: repeat;
     -fx-background-position: center center;
     -fx-effect: dropshadow(three-pass-box, black, 30, 0.5, 0, 0);
 
@@ -16,7 +16,6 @@
     -fx-opacity: 0%;
 }
 
-.spanAll {
-    -fx-pref-width: 100%;
-    -fx-pref-height: 100%;
+.lightGrayBackground {
+    -fx-background-color: lightgray;
 }

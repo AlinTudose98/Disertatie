@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="p-5 bg-transparent container align-content-center text-center h-100">
+    <div class=" bg-transparent container align-content-center text-center mt-5 mb-5">
+        <h1 class=".display-1 text-center text-light">Welcome to my EU Trusted Lists utility app</h1>
+    </div>
+    <div class=" p-5 mt-3 bg-transparent container align-content-center text-center">
+        <h4 class="text-center text-light"> You can use this app in three ways:</h4>
+        <div class="mx-5 px-5 container border-0 bg-transparent text-center align-content-center">
+            <ul class="mx-5 px-5 bg-transparent border-0 list-group">
+                <li class="mx-5 px-5 list-group-item border-0 bg-transparent d-flex justify-content-left align-items-center">
+                    <i class="bi bi-circle-fill text-light"></i>
+                    <span class="text-light ms-3">Browse the European Union trusted lists;</span>
+                </li>
+                <li class="mx-5 px-5 list-group-item bg-transparent border-0 d-flex justify-content-left align-items-center">
+                    <i class="bi bi-circle-fill text-light"></i>
+                    <span class="text-light ms-3">Verify a signature;</span>
+                </li>
+                <li class="mx-5 px-5 list-group-item bg-transparent border-0 d-flex justify-content-left align-items-center">
+                    <i class="bi bi-circle-fill text-light"></i>
+                    <span class="text-light ms-3">Verify a certificate.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/bootstrap-5.3.1-alpha/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

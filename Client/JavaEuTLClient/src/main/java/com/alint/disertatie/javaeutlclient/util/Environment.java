@@ -1,5 +1,6 @@
 package com.alint.disertatie.javaeutlclient.util;
 
+import com.alint.disertatie.javaeutlclient.MainApplication;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +15,7 @@ public class Environment {
 
     Environment(String fileName) throws IOException {
         properties = new Properties();
-        String string = String.valueOf(Thread.currentThread().getContextClassLoader().getResource(fileName).getPath());
+        String string = String.valueOf(MainApplication.class.getResource(fileName).getPath());
         properties.load(new FileInputStream(string));
     }
 }

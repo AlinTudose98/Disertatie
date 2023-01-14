@@ -1,6 +1,6 @@
-package com.alint.disertatie.javaeutlclient.model.message;
+package com.alint.disertatie.server.javaresteutlproviderapi.message;
 
-import com.alint.disertatie.javaeutlclient.model.entity.ListOfTrustedLists;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
