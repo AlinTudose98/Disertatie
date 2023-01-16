@@ -11,3 +11,11 @@ body {
     -o-background-size: cover;
     background-size: cover;
 }
+
+hr.separator {
+    border-top: 3px solid #F8CC02;
+}
+
+hr.separator-thin {
+    border-top: 1px solid #F8CC02;
+}
