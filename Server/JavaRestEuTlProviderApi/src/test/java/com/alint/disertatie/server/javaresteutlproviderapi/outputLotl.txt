@@ -1,0 +1,273 @@
+{
+	"status": 200,
+	"responseType": "LOTL",
+	"message": null,
+	"listOfTrustedLists": {
+		"indication": "TOTAL_PASSED",
+		"subIndication": null,
+		"warnings": [
+			{
+				"key": "QUAL_TL_WS_ANS",
+				"value": "The trusted list is not well signed!"
+			}
+		],
+		"lastUpdated": "2023/01/20 18:29:10",
+		"tslVersionIdentifier": 5,
+		"tslSequenceNumber": 318,
+		"tslType": "EUListOfTheLists",
+		"postalAddresses": [
+			{
+				"streetAddress": "Rue de la Loi/Wetstraat 200",
+				"locality": "Brussels",
+				"postalCode": "Rue de la Loi/Wetstraat 200",
+				"countryName": "BE"
+			}
+		],
+		"electronicAddresses": [
+			"mailto:EC-TL-Service@ec.europa.eu",
+			"https://ec.europa.eu/digital-agenda/en/eu-trusted-lists-certification-service-providers"
+		],
+		"schemeName": "EU:List containing the information notified by Member States pursuant to Article 4(1) and Article 4(2) of Commission Implementing Decision (EU) 2015/1505 of 8 September 2015 laying down technical specifications and formats relating to trusted lists pursuant to Article 22(5) of Regulation (EU) No 910/2014 of the European Parliament and of the Council on electronic identification and trust services for electronic transactions in the internal market, published by the Commission in accordance with Article 4(3) of Commission Implementing Decision (EU) 2015/1505.",
+		"schemeInformationURI": [
+			"https://ec.europa.eu/tools/lotl/eu-lotl-pivot-300.xml",
+			"https://ec.europa.eu/tools/lotl/eu-lotl-pivot-282.xml",
+			"https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.C_.2019.276.01.0001.01.ENG",
+			"https://ec.europa.eu/tools/lotl/eu-lotl-legalnotice.html#en"
+		],
+		"statusDeterminationApproach": "http://uri.etsi.org/TrstSvc/TrustedList/StatusDetn/EUlistofthelists",
+		"schemeTypeCommunityRules": "http://uri.etsi.org/TrstSvc/TrustedList/schemerules/EUlistofthelists",
+		"schemeTerritory": "EU",
+		"historicalInformationPeriod": 65535,
+		"listIssueDateTime": "2023-01-18T12:15:33Z",
+		"nextUpdate": "2023-07-18T11:15:33Z",
+		"distributionPoint": "https://ec.europa.eu/tools/lotl/eu-lotl.xml",
+		"pointersToOtherTsl": [
+			{
+				"tslType": "EUListOfTheLists",
+				"tslLocation": "https://ec.europa.eu/tools/lotl/eu-lotl.xml",
+				"schemeTerritory": "EU",
+				"schemeOperatorName": "European Commission",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.signatur.rtr.at/currenttl.xml",
+				"schemeTerritory": "AT",
+				"schemeOperatorName": "Rundfunk und Telekom Regulierungs-GmbH",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://tsl.belgium.be/tsl-be.xml",
+				"schemeTerritory": "BE",
+				"schemeOperatorName": "FPS Economy, SMEs, Self-employed and Energy - Quality and Safety",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://crc.bg/files/_en/TSL_BG.xml",
+				"schemeTerritory": "BG",
+				"schemeOperatorName": "Communications Regulation Commission",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://dec.dmrid.gov.cy/dmrid/dec/ws_dec.nsf/all/5064247FF4FC3DCCC2258506002EEA17/$file/TSL-CY-sign.xml",
+				"schemeTerritory": "CY",
+				"schemeOperatorName": "Department of Electronic Communications",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://tsl.gov.cz/publ/TSL_CZ.xtsl",
+				"schemeTerritory": "CZ",
+				"schemeOperatorName": "Ministry of the Interior of the Czech Republic",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://tl.bundesnetzagentur.de/TL-DE.XML",
+				"schemeTerritory": "DE",
+				"schemeOperatorName": "Federal Network Agency",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.digst.dk/TSLDKxml",
+				"schemeTerritory": "DK",
+				"schemeOperatorName": "Danish Agency for Digitisation // CVR:34051178",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://sr.riik.ee/tsl/estonian-tsl.xml",
+				"schemeTerritory": "EE",
+				"schemeOperatorName": "Estonian Information System Authority",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.eett.gr/tsl/EL-TSL.xml",
+				"schemeTerritory": "EL",
+				"schemeOperatorName": "EETT",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://sedediatid.mineco.gob.es/Prestadores/TSL/TSL.xml",
+				"schemeTerritory": "ES",
+				"schemeOperatorName": "MINISTRY OF ECONOMY AND BUSINESS",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://dp.trustedlist.fi/fi-tl.xml",
+				"schemeTerritory": "FI",
+				"schemeOperatorName": "Traficom",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://ssi.gouv.fr/uploads/tl-fr.xml",
+				"schemeTerritory": "FR",
+				"schemeOperatorName": "French network and information security agency",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://mingor.gov.hr/UserDocsImages/Trgovina/TSL-HR.xml",
+				"schemeTerritory": "HR",
+				"schemeOperatorName": "Ministry of Economy and Sustainable Development",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "http://www.nmhh.hu/tl/pub/HU_TL.xml",
+				"schemeTerritory": "HU",
+				"schemeOperatorName": "National Media and Infocommunications Authority, Hungary",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "http://files.dcenr.gov.ie/rh/Irelandtslsigned.xml",
+				"schemeTerritory": "IE",
+				"schemeOperatorName": "Department of the Environment, Climate and Communications",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.fjarskiptastofa.is/library/skrar/tsl/tsl.xml",
+				"schemeTerritory": "IS",
+				"schemeOperatorName": "The Electronic Communications Office of Iceland",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://eidas.agid.gov.it/TL/TSL-IT.xml",
+				"schemeTerritory": "IT",
+				"schemeOperatorName": "Agenzia per l'Italia Digitale",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.llv.li/files/ak/xml-llv-ak-tsl.xml",
+				"schemeTerritory": "LI",
+				"schemeOperatorName": "Office for Communications",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://elektroninisparasas.lt/LT-TSL.xml",
+				"schemeTerritory": "LT",
+				"schemeOperatorName": "Communications Regulatory Authority of the Republic of Lithuania",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://trusted-list.lu/tsl.xml",
+				"schemeTerritory": "LU",
+				"schemeOperatorName": "ILNAS",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://trustlist.gov.lv/tsl/latvian-tsl.xml",
+				"schemeTerritory": "LV",
+				"schemeOperatorName": "Supervisory Committee of Digital Security",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://tsl.mca.org.mt/MT_TSL.xml",
+				"schemeTerritory": "MT",
+				"schemeOperatorName": "Malta Communications Authority",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.agentschaptelecom.nl/binaries/agentschap-telecom/documenten/publicaties/2018/januari/01/digitale-statuslijst-van-vertrouwensdiensten/current-tsl.xml",
+				"schemeTerritory": "NL",
+				"schemeOperatorName": "Radiocommunications Agency",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://tl-norway.no/TSL/NO_TSL.XML",
+				"schemeTerritory": "NO",
+				"schemeOperatorName": "NASJONAL KOMMUNIKASJONSMYNDIGHET",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.nccert.pl/tsl/PL_TSL.xml",
+				"schemeTerritory": "PL",
+				"schemeOperatorName": "National Bank of Poland",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.gns.gov.pt/media/1894/TSLPT.xml",
+				"schemeTerritory": "PT",
+				"schemeOperatorName": "National Security Cabinet of Portugal",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.adr.gov.ro/trustedlist.xml",
+				"schemeTerritory": "RO",
+				"schemeOperatorName": "AUTHORITY FOR THE DIGITALISATION OF ROMANIA",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://trustedlist.pts.se/SE-TL.xml",
+				"schemeTerritory": "SE",
+				"schemeOperatorName": "Swedish Post and Telecom Agency (PTS)",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://www.tl.gov.si/SI_TL.xml",
+				"schemeTerritory": "SI",
+				"schemeOperatorName": "Republic of Slovenia, Ministry of Public Administration, Public Sector Inspectorate",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "http://tl.nbu.gov.sk/kca/tsl/tsl.xml",
+				"schemeTerritory": "SK",
+				"schemeOperatorName": "NATIONAL SECURITY AUTHORITY",
+				"mimeType": "XML"
+			},
+			{
+				"tslType": "EUGeneric",
+				"tslLocation": "https://ec.europa.eu/tools/lotl/Final_EU_TSL-UKsigned.xml",
+				"schemeTerritory": "UK",
+				"schemeOperatorName": "tScheme Limited",
+				"mimeType": "XML"
+			}
+		],
+		"policyOrLegalNotice": "In accordance with Art. 4(3) of Commission Implementing Decision (EU) 2015/1505 of 8 September 2015 laying down technical specifications and formats relating to trusted lists pursuant to Article 22(5) of Regulation (EU) No 910/2014 of the European Parliament and of the Council on electronic identification and trust services for electronic transactions in the internal market, the present list contains the information notified by Member States pursuant to Art. 4(1) and Art. 4(2) of Commission Implementing Decision (EU) 2015/1505.\nThe European Commission maintains this website as an interoperability tool designed to facilitate the practical use of national Trusted Lists. Our goal is to keep this information timely and accurate. If errors are brought to our attention, we will try to correct them. However, the Commission accepts no responsibility or liability whatsoever with regard to the content of national Trusted Lists which lies exclusively with the Member States.\nIt is our goal to minimise disruption caused by technical errors. However, some data or information on our site may have been created or structured in files or formats that are not error-free and we cannot guarantee that our service will not be interrupted or otherwise affected by such problems. The European Commission accepts no responsibility with regard to such problems incurred as a result of using this site or any linked external sites.\nThis disclaimer is not intended to limit the liability of the European Commission in contravention of any requirements laid down in applicable national law nor to exclude its liability for matters which may not be excluded under that law.",
+		"schemeOperatorName": "European Commission"
+	}
+}

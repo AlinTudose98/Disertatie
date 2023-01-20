@@ -1,9 +1,6 @@
 package com.alint.disertatie.server.javaresteutlproviderapi.util;
 
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.CustomMessage;
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.OtherTSLPointer;
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustedList;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.*;
 import com.alint.disertatie.server.javaresteutlproviderapi.enums.TSLType;
 import com.alint.disertatie.server.javaresteutlproviderapi.exception.BadRequestException;
 import com.alint.disertatie.server.javaresteutlproviderapi.exception.CountryNotFoundException;
@@ -28,6 +25,8 @@ import org.springframework.stereotype.Component;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -148,6 +147,111 @@ public class TLParser {
         trustedList.setListIssueDateTime(listIssueDateTime.getTextContent());
         trustedList.setHistoricalInformationPeriod(Integer.parseInt(historicalInformationPeriod.getTextContent()));
         trustedList.setTslType(TSLType.EUGeneric);
+
+        Element tslVersionIdentifier = (Element) doc.getElementsByTagName(ns + "TSLVersionIdentifier").item(0);
+        trustedList.setTslVersionIdentifier(Integer.parseInt(tslVersionIdentifier.getTextContent()));
+
+        Element tslSequenceNumber = (Element) doc.getElementsByTagName(ns + "TSLSequenceNumber").item(0);
+        trustedList.setTslSequenceNumber(Integer.parseInt(tslSequenceNumber.getTextContent()));
+
+        Element schemeOperatorName = (Element) doc.getElementsByTagName(ns + "SchemeOperatorName").item(0);
+        NodeList names = schemeOperatorName.getElementsByTagName(ns + "Name");
+        for(int i=0; i< names.getLength(); i++) {
+            if(names.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element name = (Element) names.item(i);
+            if(name.getAttribute("xml:lang").equals("en")) {
+                trustedList.setSchemeOperatorName(name.getTextContent());
+                break;
+            }
+        }
+
+        Element schemeOperatorAddresses = (Element) doc.getElementsByTagName(ns + "SchemeOperatorAddress").item(0);
+        Element schemeOperatorPostalAddresses = (Element) schemeOperatorAddresses.getElementsByTagName(ns + "PostalAddresses").item(0);
+        Element SchemeOperatorElectronicAddresses = (Element) schemeOperatorAddresses.getElementsByTagName(ns + "ElectronicAddress").item(0);
+
+        List<PostalAddress> postalAddresses = new ArrayList<>();
+        List<String> emailAddresses = new ArrayList<>();
+
+        NodeList tspPostalAddressesList = schemeOperatorPostalAddresses.getElementsByTagName(ns + "PostalAddress");
+        for (int i = 0; i < tspPostalAddressesList.getLength(); i++) {
+            if (tspPostalAddressesList.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element address = (Element) tspPostalAddressesList.item(i);
+            if (!address.getAttribute("xml:lang").equalsIgnoreCase("en"))
+                continue;
+            PostalAddress postalAddress = new PostalAddress();
+            postalAddress.setPostalCode(address.getElementsByTagName(ns + "StreetAddress").item(0).getTextContent());
+            postalAddress.setLocality(address.getElementsByTagName(ns + "Locality").item(0).getTextContent());
+            postalAddress.setCountryName(address.getElementsByTagName(ns + "CountryName").item(0).getTextContent());
+            postalAddress.setStreetAddress(address.getElementsByTagName(ns + "StreetAddress").item(0).getTextContent());
+
+            postalAddresses.add(postalAddress);
+        }
+
+        NodeList tspElectronicAddressesList = SchemeOperatorElectronicAddresses.getElementsByTagName(ns + "URI");
+        for(int j=0; j< tspElectronicAddressesList.getLength(); j++) {
+            if (tspElectronicAddressesList.item(j).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element uri = (Element) tspElectronicAddressesList.item(j);
+            emailAddresses.add(uri.getTextContent());
+        }
+
+        trustedList.setPostalAddresses(postalAddresses);
+        trustedList.setElectronicAddresses(emailAddresses);
+
+        Element schemeName = (Element) doc.getElementsByTagName(ns + "SchemeName").item(0);
+        names = schemeName.getElementsByTagName(ns + "Name");
+        for(int i=0; i< names.getLength(); i++) {
+            if(names.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element name = (Element) names.item(i);
+            if(name.getAttribute("xml:lang").equals("en")) {
+                trustedList.setSchemeName(name.getTextContent());
+                break;
+            }
+        }
+
+        trustedList.setSchemeInformationURI(new ArrayList<>());
+        Element schemeInformationUri = (Element) doc.getElementsByTagName(ns + "SchemeInformationURI").item(0);
+        NodeList uris = schemeInformationUri.getElementsByTagName("URI");
+        for(int i=0; i< uris.getLength(); i++) {
+            if(uris.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element uri = (Element) uris.item(i);
+            if(uri.getAttribute("xml:lang").equals("en")) {
+                trustedList.getSchemeInformationURI().add(uri.getTextContent());
+            }
+        }
+
+        Element statusDeterminationApproach = (Element) doc.getElementsByTagName(ns + "StatusDeterminationApproach").item(0);
+        trustedList.setStatusDeterminationApproach(statusDeterminationApproach.getTextContent());
+
+        Element schemeTypeCommunityRules = (Element) doc.getElementsByTagName(ns + "SchemeTypeCommunityRules").item(0);
+        uris = schemeTypeCommunityRules.getElementsByTagName(ns + "URI");
+        for(int i=0; i< uris.getLength(); i++) {
+            if(uris.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element uri = (Element) uris.item(i);
+            if(uri.getAttribute("xml:lang").equals("en")) {
+                trustedList.setSchemeTypeCommunityRules(uri.getTextContent());
+                break;
+            }
+        }
+
+        Element policyOrLegalNotice = (Element) doc.getElementsByTagName(ns + "PolicyOrLegalNotice").item(0);
+        NodeList tslLegalNotices = policyOrLegalNotice.getElementsByTagName(ns + "TSLLegalNotice");
+        for(int i=0; i< tslLegalNotices.getLength(); i++) {
+            if(tslLegalNotices.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element tslLegalNotice = (Element) tslLegalNotices.item(i);
+            if(tslLegalNotice.getAttribute("xml:lang").equals("en")) {
+                trustedList.setPolicyOrLegalNotice(tslLegalNotice.getTextContent());
+                break;
+            }
+        }
+
+
 
         Element pointersToOtherTsl = (Element) schemeInformation.getElementsByTagName(ns + "PointersToOtherTSL").item(0);
         trustedList.setPointersToOtherTSL(Util.parsePointersToOtherTsl(pointersToOtherTsl, nsMode));

@@ -3,6 +3,8 @@ package com.alint.disertatie.server.javaresteutlproviderapi.util;
 
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.CustomMessage;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.PostalAddress;
+import com.alint.disertatie.server.javaresteutlproviderapi.enums.TSLType;
 import com.google.common.util.concurrent.Monitor;
 import eu.europa.esig.dss.enumerations.Indication;
 import eu.europa.esig.dss.enumerations.SubIndication;
@@ -24,6 +26,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
@@ -143,7 +147,111 @@ public class EuTLParser implements Runnable {
         Element pointersToOtherTSL = (Element) schemeInformation.getElementsByTagName("PointersToOtherTSL").item(0);
 
         listOfTrustedLists.setPointersToOtherTsl(Util.parsePointersToOtherTsl(pointersToOtherTSL, false));
+        listOfTrustedLists.setTslType(TSLType.EUListOfTheLists);
         listOfTrustedLists.setLastUpdated(formatter.format(LocalDateTime.now()));
+
+        Element tslVersionIdentifier = (Element) doc.getElementsByTagName("TSLVersionIdentifier").item(0);
+        listOfTrustedLists.setTslVersionIdentifier(Integer.parseInt(tslVersionIdentifier.getTextContent()));
+
+        Element tslSequenceNumber = (Element) doc.getElementsByTagName("TSLSequenceNumber").item(0);
+        listOfTrustedLists.setTslSequenceNumber(Integer.parseInt(tslSequenceNumber.getTextContent()));
+
+        Element schemeOperatorName = (Element) doc.getElementsByTagName("SchemeOperatorName").item(0);
+        NodeList names = schemeOperatorName.getElementsByTagName("Name");
+        for(int i=0; i< names.getLength(); i++) {
+            if(names.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element name = (Element) names.item(i);
+            if(name.getAttribute("xml:lang").equals("en")) {
+                listOfTrustedLists.setSchemeOperatorName(name.getTextContent());
+                break;
+            }
+        }
+
+        Element schemeOperatorAddresses = (Element) doc.getElementsByTagName("SchemeOperatorAddress").item(0);
+        Element schemeOperatorPostalAddresses = (Element) schemeOperatorAddresses.getElementsByTagName("PostalAddresses").item(0);
+        Element SchemeOperatorElectronicAddresses = (Element) schemeOperatorAddresses.getElementsByTagName("ElectronicAddress").item(0);
+
+        List<PostalAddress> postalAddresses = new ArrayList<>();
+        List<String> emailAddresses = new ArrayList<>();
+
+        NodeList tspPostalAddressesList = schemeOperatorPostalAddresses.getElementsByTagName("PostalAddress");
+        for (int i = 0; i < tspPostalAddressesList.getLength(); i++) {
+            if (tspPostalAddressesList.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element address = (Element) tspPostalAddressesList.item(i);
+            if (!address.getAttribute("xml:lang").equalsIgnoreCase("en"))
+                continue;
+            PostalAddress postalAddress = new PostalAddress();
+            postalAddress.setPostalCode(address.getElementsByTagName("StreetAddress").item(0).getTextContent());
+            postalAddress.setLocality(address.getElementsByTagName("Locality").item(0).getTextContent());
+            postalAddress.setCountryName(address.getElementsByTagName("CountryName").item(0).getTextContent());
+            postalAddress.setStreetAddress(address.getElementsByTagName("StreetAddress").item(0).getTextContent());
+
+            postalAddresses.add(postalAddress);
+        }
+
+        NodeList tspElectronicAddressesList = SchemeOperatorElectronicAddresses.getElementsByTagName("URI");
+        for(int j=0; j< tspElectronicAddressesList.getLength(); j++) {
+            if (tspElectronicAddressesList.item(j).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element uri = (Element) tspElectronicAddressesList.item(j);
+            emailAddresses.add(uri.getTextContent());
+        }
+
+        listOfTrustedLists.setPostalAddresses(postalAddresses);
+        listOfTrustedLists.setElectronicAddresses(emailAddresses);
+
+        Element schemeName = (Element) doc.getElementsByTagName("SchemeName").item(0);
+        names = schemeName.getElementsByTagName("Name");
+        for(int i=0; i< names.getLength(); i++) {
+            if(names.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element name = (Element) names.item(i);
+            if(name.getAttribute("xml:lang").equals("en")) {
+                listOfTrustedLists.setSchemeName(name.getTextContent());
+                break;
+            }
+        }
+
+        listOfTrustedLists.setSchemeInformationURI(new ArrayList<>());
+        Element schemeInformationUri = (Element) doc.getElementsByTagName("SchemeInformationURI").item(0);
+        NodeList uris = schemeInformationUri.getElementsByTagName("URI");
+        for(int i=0; i< uris.getLength(); i++) {
+            if(uris.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element uri = (Element) uris.item(i);
+            if(uri.getAttribute("xml:lang").equals("en")) {
+                listOfTrustedLists.getSchemeInformationURI().add(uri.getTextContent());
+            }
+        }
+
+        Element statusDeterminationApproach = (Element) doc.getElementsByTagName("StatusDeterminationApproach").item(0);
+        listOfTrustedLists.setStatusDeterminationApproach(statusDeterminationApproach.getTextContent());
+
+        Element schemeTypeCommunityRules = (Element) doc.getElementsByTagName("SchemeTypeCommunityRules").item(0);
+        uris = schemeTypeCommunityRules.getElementsByTagName("URI");
+        for(int i=0; i< uris.getLength(); i++) {
+            if(uris.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element uri = (Element) uris.item(i);
+            if(uri.getAttribute("xml:lang").equals("en")) {
+                listOfTrustedLists.setSchemeTypeCommunityRules(uri.getTextContent());
+                break;
+            }
+        }
+
+        Element policyOrLegalNotice = (Element) doc.getElementsByTagName("PolicyOrLegalNotice").item(0);
+        NodeList tslLegalNotices = policyOrLegalNotice.getElementsByTagName("TSLLegalNotice");
+        for(int i=0; i< tslLegalNotices.getLength(); i++) {
+            if(tslLegalNotices.item(i).getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element tslLegalNotice = (Element) tslLegalNotices.item(i);
+            if(tslLegalNotice.getAttribute("xml:lang").equals("en")) {
+                listOfTrustedLists.setPolicyOrLegalNotice(tslLegalNotice.getTextContent());
+                break;
+            }
+        }
 
         return listOfTrustedLists;
     }

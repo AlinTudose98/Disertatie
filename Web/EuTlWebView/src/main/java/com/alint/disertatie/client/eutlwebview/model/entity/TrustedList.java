@@ -11,12 +11,22 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class TrustedList extends Entity{
-    private String distributionPoint;
-    private String schemeTerritory;
+    private int tslVersionIdentifier;
+    private int tslSequenceNumber;
     private TSLType tslType;
+    private String SchemeOperatorName;
+    private List<PostalAddress> postalAddresses;
+    private List<String> electronicAddresses;
+    private String schemeName;
+    private List<String> schemeInformationURI;
+    private String statusDeterminationApproach;
+    private String schemeTypeCommunityRules;
+    private String schemeTerritory;
+    private String PolicyOrLegalNotice;
+    private int historicalInformationPeriod;
+    private List<OtherTSLPointer> pointersToOtherTSL;
     private String listIssueDateTime;
     private String nextUpdate;
-    private int historicalInformationPeriod;
+    private String distributionPoint;
     private List<TrustServiceProvider> trustServiceProviders;
-    private List<OtherTSLPointer> pointersToOtherTSL;
 }

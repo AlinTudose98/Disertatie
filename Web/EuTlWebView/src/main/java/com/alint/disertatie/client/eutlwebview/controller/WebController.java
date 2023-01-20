@@ -8,6 +8,7 @@ import com.alint.disertatie.client.eutlwebview.util.Util;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,7 +73,7 @@ public class WebController {
                 model.addAttribute("subIndication", tl.getSubIndication());
             }
 
-            model.addAttribute("schemeTerritory",tl.getSchemeTerritory());
+            model.addAttribute("schemeTerritory", tl.getSchemeTerritory());
             model.addAttribute("warnings", tl.getWarnings());
             List<TSPEntry> tsps = new ArrayList<>();
             List<TrustServiceProvider> tspList = tl.getTrustServiceProviders();
@@ -82,7 +83,7 @@ public class WebController {
                     return o1.getName().compareTo(o2.getName());
                 }
             });
-            for (int i=0;i< tspList.size(); i++) {
+            for (int i = 0; i < tspList.size(); i++) {
                 TSPEntry entry = new TSPEntry();
                 entry.setId(i);
                 entry.setTspName(tspList.get(i).getName());
@@ -100,10 +101,23 @@ public class WebController {
             }
 
             model.addAttribute("tspList", tsps);
+            model.addAttribute("otslp",tl.getPointersToOtherTSL());
+            model.addAttribute("tl",tl);
 
             return "trustedlist-view";
         }
         model.addAttribute("lotl", serverRetriever.getListOfTrustedLists());
         return "listoftrustedlists-view";
     }
+
+    @GetMapping("/tlbrowser/{countryCode}/{tspId}")
+    public String trustServiceProviderView(@PathVariable("countryCode") String countryCode, @PathVariable("tspId") int tspId,
+                                           HttpServletRequest request, Model model) throws IOException {
+
+        TrustedList tl = serverRetriever.getTrustedList(countryCode);
+        model.addAttribute("tsp",tl.getTrustServiceProviders().get(tspId));
+
+        return "trustedserviceprovider-view";
+    }
+
 }

@@ -119,7 +119,7 @@ public class Util {
                 continue;
 
             OtherTSLPointer otslpointer = new OtherTSLPointer();
-            otslpointer.setTslType(TSLType.EUListOfTheLists);
+            //otslpointer.setTslType(TSLType.EUListOfTheLists);
 
             Element pointer = (Element) otherTslPointers.item(i);
             Element tslLocation = (Element) pointer.getElementsByTagName(ns + "TSLLocation").item(0);
@@ -135,6 +135,19 @@ public class Util {
                     continue;
 
                 Element otherInformation = (Element) otherInformationList.item(j);
+
+                Element tslType = (Element) otherInformation.getElementsByTagName(ns + "TSLType").item(0);
+                if(tslType != null){
+                    String tslTypeValue = tslType.getTextContent();
+                    if(tslTypeValue.equals(TSLType.EUListOfTheLists.getValue()))
+                        otslpointer.setTslType(TSLType.EUListOfTheLists);
+                    if(tslTypeValue.equals(TSLType.EUGeneric.getValue()))
+                        otslpointer.setTslType(TSLType.EUGeneric);
+                    if(tslTypeValue.equals(TSLType.GenericNonEu.getValue()))
+                        otslpointer.setTslType(TSLType.GenericNonEu);
+                    if(tslTypeValue.equals(TSLType.OTHER.getValue()))
+                        otslpointer.setTslType(TSLType.OTHER);
+                }
 
                 Element pointerSchemeTerritory = (Element) otherInformation.getElementsByTagName(ns + "SchemeTerritory").item(0);
                 if (pointerSchemeTerritory != null) {
@@ -325,7 +338,8 @@ public class Util {
                     continue;
                 extension = (Element) extension.getElementsByTagName(ns + "URI").item(0);
 
-                additionalTypes.add(UriToAdditionalTypeMap.get(extension.getTextContent()));
+                if(UriToAdditionalTypeMap.get(extension.getTextContent()) != null)
+                    additionalTypes.add(UriToAdditionalTypeMap.get(extension.getTextContent()));
             }
             trustService.setAdditionalTypes(additionalTypes);
         }

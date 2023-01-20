@@ -10,6 +10,7 @@ body {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+    font-family: Arial, Verdana, sans-serif;
 }
 
 hr.separator {
@@ -22,4 +23,12 @@ hr.separator-thin {
 
 .my-dark-blue {
     color: #004494;
+}
+
+.my-bold {
+    font-weight: bold;
+}
+
+.my-bg-gray {
+    background-color: #D3D4D5;
 }
