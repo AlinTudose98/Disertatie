@@ -1,0 +1,34 @@
+echo off
+curl --insecure https://eutlservice:8443/api/tl/EU
+curl --insecure https://eutlservice:8443/api/tl/AT
+curl --insecure https://eutlservice:8443/api/tl/BE
+curl --insecure https://eutlservice:8443/api/tl/BG
+curl --insecure https://eutlservice:8443/api/tl/CY
+curl --insecure https://eutlservice:8443/api/tl/CZ
+curl --insecure https://eutlservice:8443/api/tl/DE
+curl --insecure https://eutlservice:8443/api/tl/DK
+curl --insecure https://eutlservice:8443/api/tl/EE
+curl --insecure https://eutlservice:8443/api/tl/EL
+curl --insecure https://eutlservice:8443/api/tl/ES
+curl --insecure https://eutlservice:8443/api/tl/FI
+curl --insecure https://eutlservice:8443/api/tl/FR
+curl --insecure https://eutlservice:8443/api/tl/HR
+curl --insecure https://eutlservice:8443/api/tl/HU
+curl --insecure https://eutlservice:8443/api/tl/IE
+curl --insecure https://eutlservice:8443/api/tl/IS
+curl --insecure https://eutlservice:8443/api/tl/IT
+curl --insecure https://eutlservice:8443/api/tl/LI
+curl --insecure https://eutlservice:8443/api/tl/LT
+curl --insecure https://eutlservice:8443/api/tl/LU
+curl --insecure https://eutlservice:8443/api/tl/LV
+curl --insecure https://eutlservice:8443/api/tl/MT
+curl --insecure https://eutlservice:8443/api/tl/NL
+curl --insecure https://eutlservice:8443/api/tl/NO
+curl --insecure https://eutlservice:8443/api/tl/PL
+curl --insecure https://eutlservice:8443/api/tl/PT
+curl --insecure https://eutlservice:8443/api/tl/RO
+curl --insecure https://eutlservice:8443/api/tl/SE
+curl --insecure https://eutlservice:8443/api/tl/SI
+curl --insecure https://eutlservice:8443/api/tl/SK
+curl --insecure https://eutlservice:8443/api/tl/UK
+pause

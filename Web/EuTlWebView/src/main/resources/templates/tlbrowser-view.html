@@ -7,13 +7,143 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container rounded rounded-3 bg-light">
-    <div class="row">
-        <h2 class=" m-3 h2">Trusted Lists</h2>
+    <div class="container row">
+        <div class="row mx-auto mt-4 mb-2">
+            <h1> Trusted Lists Browser</h1>
+        </div>
+        <div class="row mx-auto mt-2 mb-1">
+            <p class="description">
+                The Member States of the European Union and European Economic Area publish trusted lists of qualified
+                trust service providers in accordance with the eIDAS Regulation. The European Commission publishes a
+                list of these trusted lists, the List of Trusted Lists (LOTL). The European Commission, through the
+                DIGITAL program, provides this tool for anyone to browse the national trusted lists and the LOTL.
+            </p>
+        </div>
     </div>
     <hr class="separator">
-    <div class="row container">
-        <div th:each="{ ${}"
-
+    <div class="row">
+        <div class="col-11">
+            <h2 class="m-3 h2">Trusted Lists</h2>
+        </div>
+        <div class="col-1">
+            <div th:replace="~{fragments/warnings :: warning-dropdown}"></div>
+        </div>
+    </div>
+    <div class="container align-items-center d-flex justify-content-center flex-wrap p-3">
+        <div th:each="pointer: ${pointerList}">
+            <div class="m-2 p-2 border-top border-1" style="width: 400px">
+                <div class="row">
+                    <div class="col-4">
+                        <a class="ms-3" th:href="@{/tlbrowser/{cc}(cc=${pointer.getSchemeTerritory()})}">
+                            <img
+                                    class="img-fluid border p-0 border-dark border-1 float-start rounded rounded-2"
+                                    style="width: 75px; height: 50px"
+                                    th:src="@{/img/countries/{cc}(cc=${pointer.getSchemeTerritory()})}"
+                                    th:alt="${pointer.getSchemeTerritory()}">
+                        </a>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-6 m-1 align-items-end align-content-end text-end">
+                        <h4><a class="text-decoration-none my-dark-blue text-end"
+                               th:text="${@countries.getCountry(pointer.getSchemeTerritory())}"
+                               th:href="@{/tlbrowser/{cc}(cc=${pointer.getSchemeTerritory()})}"></a></h4>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-4 text-start align-items-start">
+                        <a class="text-start btn btn-info text-decoration-none"
+                           th:href="@{/tlbrowser/{cc}(cc=${pointer.getSchemeTerritory()})}">View details</a>
+                    </div>
+                    <div class="col-8 text-end align-items-end">
+                        <a class="text-end btn btn-light"
+                           th:href="@{/tldownloader/{cc}(cc=${pointer.getSchemeTerritory()})}">Download XML</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="separator">
+    <div class="container align-items-center d-flex justify-content-start flex-wrap p-3">
+        <div class="m-2 p-2 border-top border-1" style="width: 400px">
+            <div class="row">
+                <div class="col-4">
+                    <a class="ms-3" th:href="@{/tlbrowser/{cc}(cc=${EUPointer.getSchemeTerritory()})}">
+                        <img
+                                class="img-fluid border p-0 border-dark border-1 float-start rounded rounded-2"
+                                style="width: 75px; height: 50px"
+                                th:src="@{/img/countries/{cc}(cc=${EUPointer.getSchemeTerritory()})}"
+                                th:alt="${EUPointer.getSchemeTerritory()}">
+                    </a>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-6 m-1 align-items-end align-content-end text-end">
+                    <h4><a class="text-decoration-none my-dark-blue text-end"
+                           th:text="${@countries.getCountry(EUPointer.getSchemeTerritory())}"
+                           th:href="@{/tlbrowser/{cc}(cc=${EUPointer.getSchemeTerritory()})}"></a></h4>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6 text-start align-items-start">
+                    <a class="text-start btn btn-info text-decoration-none"
+                       th:href="@{/tlbrowser/{cc}(cc=${EUPointer.getSchemeTerritory()})}">View details</a>
+                </div>
+                <div class="col-6 text-end align-items-end">
+                    <a class="text-end btn btn-light"
+                       th:href="@{/tldownloader/{cc}(cc=${EUPointer.getSchemeTerritory()})}">Download XML</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="separator">
+    <div class="container align-items-center p-3">
+        <div class="row">
+            <div class="col-4 m-2 p-2 border-top border-1">
+                <div class="row">
+                    <div class="col-4">
+                        <a class="ms-3" th:href="@{/tlbrowser/{cc}(cc=${UKPointer.getSchemeTerritory()})}">
+                            <img
+                                    class="img-fluid border p-0 border-dark border-1 float-start rounded rounded-2"
+                                    style="width: 75px; height: 50px"
+                                    th:src="@{/img/countries/{cc}(cc=${UKPointer.getSchemeTerritory()})}"
+                                    th:alt="${UKPointer.getSchemeTerritory()}">
+                        </a>
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-6 m-1 align-items-end align-content-end text-end">
+                        <h4><a class="text-decoration-none my-dark-blue text-end"
+                               th:text="${@countries.getCountry(UKPointer.getSchemeTerritory())}"
+                               th:href="@{/tlbrowser/{cc}(cc=${UKPointer.getSchemeTerritory()})}"></a></h4>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6 text-start align-items-start">
+                        <a class="text-start btn btn-info text-decoration-none"
+                           th:href="@{/tlbrowser/{cc}(cc=${UKPointer.getSchemeTerritory()})}">View details</a>
+                    </div>
+                    <div class="col-6 text-end align-items-end">
+                        <a class="text-end btn btn-light"
+                           th:href="@{/tldownloader/{cc}(cc=${UKPointer.getSchemeTerritory()})}">Download XML</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-7 m-1 p-2">
+                <div class="row mx-1 mt-2 mb-3">
+                    <h6 class="text-break">Last known version of the TL of UK published just before leaving the eIDAS
+                        TLs Scheme</h6>
+                </div>
+                <div class="row mx-1 mt-2 mb-3">
+                    <p class="text-break">
+                        Last known version of the trusted list of UK published just before leaving the eIDAS Trusted
+                        Lists Scheme as described in <a class="link-info text-decoration-none"
+                                                        href="http://uri.etsi.org/TrstSvc/TrustedList/schemerules/EUcommon/.">http://uri.etsi.org/TrstSvc/TrustedList/schemerules/EUcommon/.</a>
+                        This
+                        trusted list is displayed here for the sole purpose of the verification of the outputs of
+                        qualified trust services (e.g. qualified electronic signatures) that were created before that
+                        moment.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

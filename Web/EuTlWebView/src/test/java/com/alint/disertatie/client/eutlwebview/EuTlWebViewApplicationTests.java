@@ -1,7 +1,7 @@
 package com.alint.disertatie.client.eutlwebview;
 
 import com.alint.disertatie.client.eutlwebview.model.entity.ListOfTrustedLists;
-import com.alint.disertatie.client.eutlwebview.model.util.ServerRetriever;
+import com.alint.disertatie.client.eutlwebview.util.ServerRetriever;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

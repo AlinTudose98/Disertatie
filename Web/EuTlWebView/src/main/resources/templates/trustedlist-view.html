@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container rounded rounded-3 bg-light">
+    <div class="container row">
+        <div class="row mx-auto mt-4 mb-2">
+            <div class="col-1">
+                <img class="float-start img-fluid border p-o border-dark border-1 rounded rounded-2"
+                     th:src="@{/img/countries/{cc}(cc=${schemeTerritory})}"
+                     th:alt="${schemeTerritory}">
+            </div>
+            <!--            <div class="col-1"></div>-->
+            <div class="col-10">
+                <h1 class="float-start"
+                    th:text="'Trusted List ' + ${@countries.getCountry(schemeTerritory)}"></h1>
+            </div>
+            <div class="col-1">
+                <div th:replace="~{fragments/warnings :: warning-dropdown}"></div>
+            </div>
+        </div>
+    </div>
+    <hr class="separator">
+
+    <div class="container row my-3 py-3">
+        <h3 class="float-start m-3"> Trust Service Providers </h3>
+
+        <div id="activeTspAccordion" class="my-3">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <a class="btn w-100 text-start" data-bs-toggle="collapse" href="#activeTspAccordionBody">
+                        <strong>Currently active trust service providers</strong>
+                    </a>
+                </div>
+                <div id="activeTspAccordionBody" class="collapse show" data-bs-parent="#accordion">
+                    <div class="card-body">
+                        <div class="container d-flex justify-content-between align-content-around align-items-center flex-wrap p-1">
+                            <th:block th:each="i: ${#numbers.sequence(0, tspList.size() - 1)}">
+                                <th:block th:if="${tspList.get(i).isActiveStatus()}">
+                                    <div style="width: 600px">
+                                        <div class="m-2 p-2 border-bottom border-1 align-self-stretch">
+                                            <div class="row d-flex flex-wrap align-content-start">
+                                                <a class="my-dark-blue font-weight-bold"
+                                                   th:text="${tspList[i].getTspName()}"
+                                                   th:href="@{/tlbrowser/${schemeTerritory}/${i}}"></a>
+                                                <th:block th:each="qual: ${tspList[i].getQuals()}">
+                                                    <span th:if="${qual.substring(0,1).startsWith('Q')}"
+                                                          class="text-black badge bg-warning"
+                                                          th:text="${qual}"></span>
+                                                    <span th:if="${!qual.substring(0,1).startsWith('Q')}"
+                                                          class="text-black badge bg-secondary"
+                                                          th:text="${qual}"></span>
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap-5.3.1-alpha/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -1,15 +1,22 @@
 package com.alint.disertatie.server.javaresteutlproviderapi;
 
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.OtherTSLPointer;
 import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustServiceProvider;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLParser;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLValidator;
 import com.alint.disertatie.server.javaresteutlproviderapi.util.Util;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -18,8 +25,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class JavaRestEuTlProviderApiApplicationTests {
 
+    private final Environment env;
+    private final EuTLParser parser;
+    private final EuTLValidator validator;
+
+    @Autowired
+    public JavaRestEuTlProviderApiApplicationTests(Environment env, EuTLParser parser, EuTLValidator validator) {
+        this.env = env;
+        this.parser = parser;
+        this.validator = validator;
+    }
+
     @Test
     void contextLoads() {
+    }
+
+    @Test
+    void LotlGetsParsed() throws IOException {
+        Thread myValThread = new Thread(validator);
+        myValThread.start();
+        Thread myThread = new Thread(parser);
+        myThread.start();
+
+        String lotlXmlSource = Util.getResponseFromUrl(env.getProperty("dss.europa.tl.lotl_url"));
+        ListOfTrustedLists listOfTrustedLists = parser.getListOfTrustedLists();
+        for (OtherTSLPointer pointer: listOfTrustedLists.getPointersToOtherTsl()) {
+            System.out.println("curl --insecure https://eutlservice:8443/api/tl/" + pointer.getSchemeTerritory());
+        }
     }
 
     @Test

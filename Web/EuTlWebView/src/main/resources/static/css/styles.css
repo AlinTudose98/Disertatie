@@ -1,9 +1,9 @@
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-}
+/*.footer {*/
+/*    position: fixed;*/
+/*    left: 0;*/
+/*    bottom: 0;*/
+/*    width: 100%;*/
+/*}*/
 body {
     background: url(../img/background.jpg) no-repeat center center fixed;
     -webkit-background-size: cover;
@@ -13,9 +13,13 @@ body {
 }
 
 hr.separator {
-    border-top: 3px solid #F8CC02;
+    border-top: 3px solid darkgoldenrod;
 }
 
 hr.separator-thin {
-    border-top: 1px solid #F8CC02;
+    border-top: 1px solid darkgoldenrod;
+}
+
+.my-dark-blue {
+    color: #004494;
 }
