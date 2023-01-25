@@ -11,7 +11,8 @@ import java.util.List;
 @ToString
 public class TrustServiceProvider {
     private String name;
-    private String tradeName;
+    private List<String> tradeNames;
+    private String informationUri;
     private List<String> electronicAddresses;
     private List<PostalAddress> postalAddresses;
     private List<TrustService> trustServices;

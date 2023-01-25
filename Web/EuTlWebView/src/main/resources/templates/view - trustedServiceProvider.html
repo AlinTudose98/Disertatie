@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container rounded rounded-3 bg-light min-height-cover">
+    <div class="container row">
+        <div class="row mx-auto mt-4 mb-2">
+            <div class="col-1">
+                <img class="float-start img-fluid border p-o border-dark border-1 rounded rounded-2"
+                     th:src="@{/img/countries/{cc}(cc=${schemeTerritory})}"
+                     th:alt="${schemeTerritory}">
+            </div>
+            <div class="col-10">
+                <h1 class="float-start"
+                    th:text="${tsp.getName()}"></h1>
+            </div>
+            <div class="col-1">
+                <div th:replace="~{fragments/warnings :: warning-dropdown}"></div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="separator">
+
+    <div class="container row my-3 py-3">
+        <h3 class="float-start m-3"> Trust Services</h3>
+
+        <div id="trustedServicesAccordion" class="my-2">
+            <th:block th:each="qual : ${quals}">
+                <div class="card m-2">
+                    <div class="card-header my-bg-gray">
+                        <a class="btn w-100 text-start" data-bs-toggle="collapse"
+                           th:href="'#' + ${qual.replace(' ','')} + 'AccordionBody'">
+                            <span th:if="${qual.startsWith('Q')}" class="text-black badge bg-warning"
+                                  th:text="${qual}"></span>
+                            <span th:if="${!qual.startsWith('Q')}" class="m-1 text-black badge bg-secondary"
+                                  th:text="${qual}"></span>
+                            <strong th:text="${@util.translateQual(qual)}"></strong>
+                        </a>
+                    </div>
+                    <div th:id="${qual.replace(' ','')} + 'AccordionBody'" class="collapse"
+                         data-bs-parent="#trustedServicesAccordion">
+                        <div class="container d-flex justify-content-between align-content-around align-items-center flex-wrap p-1">
+                            <th:block th:each="i: ${#numbers.sequence(0, tss.size() - 1)}">
+                                <th:block th:if="${tss[i].getQual().equalsIgnoreCase(qual)}">
+                                    <div style="width: 600px">
+                                        <div class="m-2 p-2 border-bottom order-1 align-self-stretch">
+                                            <div class="row">
+                                                <h6>
+                                                    <a class="text-decoration-none my-underline-hover my-dark-blue my-bold"
+                                                       th:text="${tss[i].getTrustService().getServiceName()}"
+                                                       th:href="@{/tlbrowser/{schemeTerritory}/{tspId}/{serviceId}(schemeTerritory=${schemeTerritory},tspId=${tspId},serviceId=${tss[i].getId()})}"></a>
+                                                    <th:block>
+                                                        <span th:if="${qual.startsWith('Q')}"
+                                                              class="text-black badge bg-warning my-lighter"
+                                                              th:text="${tss[i].getTrustService().getServiceType().getValue().replace('http://uri.etsi.org/TrstSvc/Svctype/','')}"></span>
+                                                        <span th:if="${!qual.startsWith('Q')}"
+                                                              class="text-black badge bg-secondary my-lighter"
+                                                              th:text="${tss[i].getTrustService().getServiceType().getValue().replace('http://uri.etsi.org/TrstSvc/Svctype/','')}"></span>
+                                                        <span th:if="${tss[i].getTrustService().getServiceStatus() == T(com.alint.disertatie.client.eutlwebview.model.enums.TrustServiceStatus).Granted}"
+                                                              class="badge bg-success my-lighter">
+                                                            Granted
+                                                        </span>
+                                                        <span th:if="${!(tss[i].getTrustService().getServiceStatus() == T(com.alint.disertatie.client.eutlwebview.model.enums.TrustServiceStatus).Granted)}"
+                                                              class="badge bg-dark my-lighter"
+                                                              th:text="${@util.translateStatus(tss[i].getTrustService().getServiceStatus())}">
+                                                        </span>
+                                                    </th:block>
+                                                </h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+
+        <hr class="separator">
+
+        <div id="detailedInformationAccordion" class="my-2">
+            <div class="card m-2">
+                <div class="card-header my-bg-gray">
+                    <a class="btn w-100 text-start" data-bs-toggle="collapse" href="#detailedInformationAccordionBody">
+                        <strong>Detailed Information</strong>
+                    </a>
+                </div>
+                <div id="detailedInformationAccordionBody" class="collapse p-4"
+                     data-bs-parent="#detailedInformationAccordion">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Name</h6>
+                                </div>
+                                <div class="row">
+                                    <span th:text="${tsp.getName()}"></span>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Trade names</h6>
+                                </div>
+                                <div class="row" th:each="tradeName: ${tsp.getTradeNames()}">
+                                    <span th:text="${tradeName}"></span>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Postal address</h6>
+                                </div>
+                                <div th:each="address : ${tsp.getPostalAddresses()}" class="row">
+                                    <span th:text="${address.toString()}"></span>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Electronic Address</h6>
+                                </div>
+                                <div class="row" th:each="email : ${tsp.getElectronicAddresses()}">
+                                    <a class="my-dark-blue text-decoration-none" th:href="${email}"
+                                       th:text="${email} + ';'"></a>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Information URI</h6>
+                                </div>
+                                <div class="row">
+                                    <a class="my-dark-blue text-decoration-none" th:href="${tsp.getInformationUri()}"
+                                       th:text="${tsp.getInformationUri()}"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap-5.3.1-alpha/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>

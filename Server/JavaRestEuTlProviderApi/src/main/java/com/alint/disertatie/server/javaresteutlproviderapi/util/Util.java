@@ -155,7 +155,14 @@ public class Util {
                     continue;
                 }
 
-                Element mimeType = (Element) otherInformation.getElementsByTagName(ns + "ns3:MimeType").item(0);
+                Element mimeType = (Element) otherInformation.getElementsByTagName("ns3:MimeType").item(0);
+                if (mimeType == null)
+                    mimeType = (Element) otherInformation.getElementsByTagName("tslx:MimeType").item(0);
+                if (mimeType == null)
+                    mimeType = (Element) otherInformation.getElementsByTagName("ns5:MimeType").item(0);
+                if (mimeType == null)
+                    mimeType = (Element) otherInformation.getElementsByTagName("ns4:MimeType").item(0);
+
                 if (mimeType != null) {
                     String mimeTypeValue = mimeType.getTextContent();
                     if (mimeTypeValue.equals(MimeType.XML.getValue()))
@@ -201,15 +208,15 @@ public class Util {
         Element tspTradeName = (Element) tspInformation.getElementsByTagName(ns + "TSPTradeName").item(0);
         if(tspTradeName == null) {
             log.warn("Found Trust Service Provider with null Trade Name.");
-            tsp.setTradeName(null);
+            tsp.setTradeNames(null);
         }
         else {
+            tsp.setTradeNames(new ArrayList<>());
             NodeList tradeNames = tspTradeName.getElementsByTagName(ns + "Name");
-            for (int i = 0; i < names.getLength(); i++) {
+            for (int i = 0; i < tradeNames.getLength(); i++) {
                 Element name = (Element) tradeNames.item(i);
                 if (name.getAttribute("xml:lang").equals("en")) {
-                    tsp.setTradeName(name.getTextContent());
-                    break;
+                    tsp.getTradeNames().add(name.getTextContent());
                 }
             }
         }
@@ -247,6 +254,16 @@ public class Util {
 
         tsp.setPostalAddresses(postalAddresses);
         tsp.setElectronicAddresses(emailAddresses);
+
+
+        Element tspInformationUri = (Element) tspInformation.getElementsByTagName(ns + "TSPInformationURI").item(0);
+        NodeList uris = tspInformationUri.getElementsByTagName("URI");
+        for(int i=0;i< uris.getLength(); i++) {
+            Element uri = (Element) uris.item(i);
+            if(uri.getAttribute("xml:lang").equalsIgnoreCase("en")) {
+                tsp.setInformationUri(uri.getTextContent());
+            }
+        }
     }
 
     public static List<TrustServiceHistoryInstance> parseTrustServiceHistory(Element serviceHistory, boolean nsMode) {

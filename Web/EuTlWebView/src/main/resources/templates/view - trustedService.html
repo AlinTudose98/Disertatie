@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container rounded rounded-3 bg-light min-height-cover">
+    <div class="container row">
+        <div class="row">
+            <h4 class="float-start" th:text="${tspName}"></h4>
+        </div>
+        <div class="row mx-auto mt-4 mb-2">
+            <div class="col-1">
+                <img class="float-start img-fluid border p-o border-dark border-1 rounded rounded-2"
+                     th:src="@{/img/countries/{cc}(cc=${schemeTerritory})}"
+                     th:alt="${schemeTerritory}">
+            </div>
+            <div class="col-10">
+                <h1 class="float-start"
+                    th:text="${ts.getServiceName()}"></h1>
+            </div>
+            <div class="col-1">
+                <div th:replace="~{fragments/warnings :: warning-dropdown}"></div>
+            </div>
+        </div>
+    </div>
+    <hr class="separator">
+
+    <div class="container row my-3 py-3">
+        <div id="accordion" class="my-2">
+            <div class="card m-2">
+                <div class="card-header my-bg-gray">
+                    <a class="btn w-100 text-start" data-bs-toggle="collapse" href="#detailedInformationAccordionBody">
+                        <strong>Detailed Information</strong>
+                    </a>
+                </div>
+                <div id="detailedInformationAccordionBody" class="collapse p-4" data-bs-parent="#accordion">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Type identifier</h6>
+                                </div>
+                                <div class="row">
+                                    <a class="text-decoration-none my-dark-blue"
+                                       th:href="${ts.getServiceType().getValue()}"
+                                       th:text="${ts.getServiceType().getValue()}"></a>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Service name</h6>
+                                </div>
+                                <div class="row">
+                                    <span th:text="${ts.getServiceName()}"></span>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Current status</h6>
+                                </div>
+                                <div class="row">
+                                    <a class="text-decoration-none my-dark-blue"
+                                       th:href="${ts.getServiceStatus().getValue()}"
+                                       th:text="${ts.getServiceStatus().getValue()}"></a>
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <div class="row mb-0 pb-0">
+                                    <h6 class="my-bold mb-0">Starting date & time</h6>
+                                </div>
+                                <div class="row">
+                                    <span th:text="${statusStartingTime}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card m-2" th:if="${ts.getAdditionalTypes() != null}">
+                <div class="card-header my-bg-gray">
+                    <a class="btn w-100 text-start" data-bs-toggle="collapse" href="#extensionAccordionBody">
+                        <strong>Extensions</strong>
+                    </a>
+                </div>
+                <div id="extensionAccordionBody" class="collapse p-4" data-bs-parent="#accordion">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                                <h6 class="my-bold">Additional service information</h6>
+                            </div>
+                            <div class="row" th:each="extension : ${ts.getAdditionalTypes()}">
+                                <span class="my-bold">URL: </span>
+                                <a th:href="${extension.getValue()}" th:text="${extension.getValue()}"
+                                   class="my-dark-blue text-decoration-none"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card m-2" th:if="${ts.getDigitalIds() != null}">
+                <div class="card-header my-bg-gray">
+                    <a class="btn w-100 text-start" data-bs-toggle="collapse" href="#digitalIdAccordionBody">
+                        <strong>Digital identity</strong>
+                    </a>
+                </div>
+                <div id="digitalIdAccordionBody" class="collapse p-4" data-bs-parent="#accordion">
+                    <div class="card-body">
+                        <div class="container">
+                            <th:block th:each="id : ${ts.getDigitalIds()}">
+                                <div class="row my-3" th:if="${id.getType().equalsIgnoreCase('X509SubjectName')}">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">Subject Name</h6>
+                                    </div>
+                                    <div class="row">
+                                        <span th:text="${id.getValue()}"></span>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:each="id : ${ts.getDigitalIds()}">
+                                <div class="row my-3" th:if="${id.getType().equalsIgnoreCase('X509SKI')}">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">x509SKI</h6>
+                                    </div>
+                                    <div class="row">
+                                        <span th:text="${id.getValue()}"></span>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:each="info : ${certInfos}">
+                                <div class="row my-3">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">Certificate Serial</h6>
+                                    </div>
+                                    <div class="row">
+                                        <span th:text="${info.getSerialNumber()}"></span>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">Signature Algorithm</h6>
+                                    </div>
+                                    <div class="row">
+                                        <span th:text="${info.getSigningAlgorithm()}"></span>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">Issuer</h6>
+                                    </div>
+                                    <div class="row">
+                                        <span th:text="${info.getIssuer()}"></span>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">Subject</h6>
+                                    </div>
+                                    <div class="row">
+                                        <span th:text="${info.getSubject()}"></span>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">Validity</h6>
+                                    </div>
+                                    <div class="row">
+                                        <span th:text="${info.getValidity()}"></span>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">Key usage</h6>
+                                    </div>
+                                    <div class="row" th:each="usage : ${info.getKeyUsages()}">
+                                        <span th:text="${usage}"></span>
+                                    </div>
+                                </div>
+                                <div class="row my-3">
+                                    <div class="row mb-0 pb-0">
+                                        <h6 class="my-bold mb-0">x509SKI</h6>
+                                    </div>
+                                    <div class="row">
+                                        <span th:text="${info.getX509SKI()}"></span>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card m-2" th:if="${history != null && !history.isEmpty()}">
+                <div class="card-header my-bg-gray">
+                    <a class="btn w-100 text-start" data-bs-toggle="collapse" href="#historyAccordionBody">
+                        <strong>History</strong>
+                    </a>
+                </div>
+                <div id="historyAccordionBody" class="collapse p-4" data-bs-parent="#accordion">
+                    <div class="row" th:each="i : ${#numbers.sequence(0,history.size() - 1)}">
+                        <a class="my-dark-blue"
+                           th:href="@{/tlbrowser/{schemeTerritory}/{tspId}/{serviceId}/{historyId}(schemeTerritory=${schemeTerritory},tspId=${tspId},serviceId=${serviceId},historyId=${history[i].getId()})}"
+                           th:text="${@util.formatTime(history[i].getHistoryInstance().getStatusStartingTime()) + ': ' + history[i].getHistoryInstance().getServiceStatus()}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap-5.3.1-alpha/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

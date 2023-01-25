@@ -29,6 +29,18 @@ hr.separator-thin {
     font-weight: bold;
 }
 
+.my-lighter {
+    font-weight: lighter;
+}
+
 .my-bg-gray {
     background-color: #D3D4D5;
+}
+
+.my-underline-hover:hover {
+    text-decoration: underline;
+}
+
+.min-height-cover {
+    min-height: 97vh;
 }

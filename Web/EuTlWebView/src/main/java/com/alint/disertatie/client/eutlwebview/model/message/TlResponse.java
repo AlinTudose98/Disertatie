@@ -1,10 +1,7 @@
 package com.alint.disertatie.client.eutlwebview.model.message;
 
 import com.alint.disertatie.client.eutlwebview.model.entity.TrustedList;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,4 +9,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TlResponse extends ResponseMessage{
     private TrustedList trustedList;
+
+    @Override
+    public String toString() {
+        return "TlResponse{" +
+                "trustedList=" + trustedList +
+                ", status=" + status +
+                ", responseType='" + responseType + '\'' +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

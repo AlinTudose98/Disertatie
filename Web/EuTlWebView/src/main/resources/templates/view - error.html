@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header:: head}">
+</head>
+<body style="background: #e3f2fd;">
+<div class="container m-5 p-5">
+    <div class="title ">
+        <h1>Hmm...</h1>
+    </div>
+    <div class="sub-title ">
+        <p> It seems that you're lost in a perpetual black hole. Let us help guide you out and get you back home.</p>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary" onclick="history.back();">Back</button>
+                <a class="btn btn-primary" th:href="@{/home}">Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap-5.3.1-alpha//bootstrap.bundle.min.js}"></script>
+</body>
+</html>

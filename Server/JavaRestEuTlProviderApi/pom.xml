@@ -45,7 +45,7 @@
         </dependency>
 
 
-        <!-- European committee DSS libraries -->
+        <!-- European commission DSS libraries -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sd-dss</groupId>
             <artifactId>dss-service</artifactId>

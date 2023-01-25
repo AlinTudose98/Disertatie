@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container rounded rounded-3 bg-light min-height-cover">
+    <div class="container row">
+        <div class="row mx-auto mt-4 mb-2">
+            <div class="col-1">
+                <img class="float-start img-fluid border p-o border-dark border-1 rounded rounded-2"
+                     th:src="@{/img/countries/{cc}(cc=${schemeTerritory})}"
+                     th:alt="${schemeTerritory}">
+            </div>
+            <!--            <div class="col-1"></div>-->
+            <div class="col-10">
+                <h1 class="float-start"
+                    th:text="'EU List of eIDAS Trusted Lists'"></h1>
+            </div>
+            <div class="col-1">
+                <div th:replace="~{fragments/warnings :: warning-dropdown}"></div>
+            </div>
+        </div>
+    </div>
+    <hr class="separator">
+
+    <div class="container row my-3 py-3">
+        <div id="detailedInformationAccordion" class="my-2">
+            <div class="card">
+                <div class="card-header my-bg-gray">
+                    <a class="btn w-100 text-start" data-bs-toggle="collapse" href="#detailedInformationAccordionBody">
+                        <strong>Detailed Information</strong>
+                    </a>
+                </div>
+                <div id="detailedInformationAccordionBody" class="collapse p-4"
+                     data-bs-parent="#detailedInformationAccordion">
+                    <div class="card-body">
+
+                        <div id="pointersToOtherTslAccordion" class="my-2">
+                            <div class="card-header my-bg-gray">
+                                <a class="btn w-100 text-start" data-bs-toggle="collapse"
+                                   href="#pointersToOtherTslAccordionBody">
+                                    <strong>Pointers to other TSL</strong>
+                                </a>
+                            </div>
+                            <div id="pointersToOtherTslAccordionBody"
+                                 class="collapse p-1 rounded-bottom rounded-bottom-1 border border-1"
+                                 data-bs-parent="#pointersToOtherTslAccordion">
+                                <div class="card-body">
+                                    <div class="container">
+                                        <div th:each="pointer : ${otslp}" class="row mx-1 my-1">
+                                            <div class="col-2">
+                                                <a class="my-dark-blue text-decoration-none"
+                                                   th:href="@{/tlbrowser/{cc}(cc=${pointer.getSchemeTerritory()})}"
+                                                   th:text="${pointer.getSchemeTerritory() + ' (XML)'}"></a>
+                                            </div>
+                                            <div class="col-10">
+                                                <span class="" th:text="${pointer.getTslLocation()}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="trustedListInformationAccordion" class="my-2">
+                            <div class="card-header my-bg-gray">
+                                <a class="btn w-100 text-start" data-bs-toggle="collapse"
+                                   href="#trustedListInformationAccordionBody">
+                                    <strong>Trusted list information</strong>
+                                </a>
+                            </div>
+                            <div class="collapse p-1 rounded-bottom rounded-bottom-1 border border-1"
+                                 id="trustedListInformationAccordionBody"
+                                 data-bs-parent="#trustedListInformationAccordion">
+                                <div class="card-body">
+                                    <div class="container">
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">TSL Tag</h6>
+                                            </div>
+                                            <div class="row">
+                                                <a class="my-dark-blue text-decoration-none"
+                                                   href="http://uri.etsi.org/19612/TSLTag">
+                                                    http://uri.etsi.org/19612/TSLTag
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Version identifier</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="${lotl.getTslVersionIdentifier()}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Territory</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="${lotl.getSchemeTerritory()}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">TSL Issuer</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="'LOTL - ' + ${lotl.getSchemeTerritory()} + ' (Sn' + ${lotl.getTslSequenceNumber()} + ')'"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3 ">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Sequence number</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="${lotl.getTslSequenceNumber()}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">TSL type</h6>
+                                            </div>
+                                            <div class="row">
+                                                <a class="text-decoration-none my-dark-blue"
+                                                   th:href="${lotl.getTslType().getValue()}"
+                                                   th:text="${lotl.getTslType().getValue()}"></a>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Operator name</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="${lotl.getSchemeOperatorName()}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Postal address</h6>
+                                            </div>
+                                            <div th:each="address : ${lotl.getPostalAddresses()}" class="row">
+                                                <span th:text="${address.toString()}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Electronic Address</h6>
+                                            </div>
+                                            <div class="row" th:each="email : ${lotl.getElectronicAddresses()}">
+                                                <a class="my-dark-blue text-decoration-none" th:href="${email}"
+                                                   th:text="${email} + ';'"></a>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Scheme name</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span class="text-wrap" th:text="${lotl.getSchemeName()}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Information URI</h6>
+                                            </div>
+                                            <div class="row" th:each="uri : ${lotl.getSchemeInformationURI()}">
+                                                <a class="text-decoration-none my-dark-blue"
+                                                   th:href="${uri}"
+                                                   th:text="${uri} + ';'"></a>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Status determination approach</h6>
+                                            </div>
+                                            <div class="row">
+                                                <a class="text-decoration-none my-dark-blue"
+                                                   th:href="${lotl.getStatusDeterminationApproach()}"
+                                                   th:text="${lotl.getStatusDeterminationApproach()}"></a>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Community rules</h6>
+                                            </div>
+                                            <div class="row" th:each="rule : ${lotl.getSchemeTypeCommunityRules()}">
+                                                <a class="my-dark-blue text-decoration-none"
+                                                   th:href="${rule}"
+                                                   th:text="${rule}"></a>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Legal notice</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="${lotl.getPolicyOrLegalNotice()}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Issue date</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="${@util.formatTime(lotl.getListIssueDateTime())}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Next update</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="${@util.formatTime(lotl.getNextUpdate())}"></span>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Distribution points</h6>
+                                            </div>
+                                            <div class="row">
+                                                <a class="my-dark-blue text-decoration-none"
+                                                   th:href="${lotl.getDistributionPoint()}"
+                                                   th:text="${lotl.getDistributionPoint()}"></a>
+                                            </div>
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="row mb-0 pb-0">
+                                                <h6 class="my-bold mb-0">Historical period</h6>
+                                            </div>
+                                            <div class="row">
+                                                <span th:text="${lotl.getHistoricalInformationPeriod()}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/bootstrap-5.3.1-alpha/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
