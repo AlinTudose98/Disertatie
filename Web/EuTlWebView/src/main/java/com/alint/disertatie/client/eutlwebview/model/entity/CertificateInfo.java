@@ -10,6 +10,11 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class CertificateInfo {
+    private int version;
+    private String notBefore;
+    private String notAfter;
+    private String publicKey;
+    private String signature;
     private String serialNumber;
     private String signingAlgorithm;
     private String issuer;

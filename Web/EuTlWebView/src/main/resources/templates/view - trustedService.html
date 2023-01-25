@@ -186,6 +186,171 @@
                                     </div>
                                 </div>
                             </th:block>
+
+                            <div class="float-start d-flex flex-wrap justify-content-start align-content-start align-items-start">
+                                <button type="button" class="m-1 btn btn-warning text-black" data-bs-toggle="modal"
+                                        data-bs-target="#base64Modal">
+                                    Base 64-encoded >
+                                </button>
+                                <button type="button" class="m-1 btn btn-warning text-black" data-bs-toggle="modal"
+                                        data-bs-target="#certInfoModal">
+                                    Certificate information >
+                                </button>
+                            </div>
+
+
+                            <div class="modal my-smaller-text fade" id="base64Modal">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="row">
+                                                <div class="col-3 text-center align-items-center align-content-center">
+                                                    <img class=" img-fluid border p-o border-dark border-1 rounded rounded-2"
+                                                         th:src="@{/img/countries/{cc}(cc=${schemeTerritory})}"
+                                                         th:alt="${schemeTerritory}">
+                                                </div>
+                                                <div class="col-8">
+                                                    <h4 class="modal-title"> Base 64-encoded </h4>
+                                                </div>
+                                                <div class="col-1">
+                                                    <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <th:block th:each="info : ${certInfos}">
+                                                    <span th:text="${info.getSubject()}"></span>
+                                                </th:block>
+                                            </div>
+                                            <th:block th:each="id : ${ts.getDigitalIds()}">
+                                                <th:block th:if="${id.getType().equalsIgnoreCase('X509Certificate')}">
+                                                    <div class="row">
+                                                        <span>--------------------BEGIN CERTIFICATE--------------------</span>
+                                                    </div>
+                                                    <div class="row">
+                                                        <span th:text="${id.getValue()}"></span>
+                                                    </div>
+                                                    <div class="row">
+                                                        <span>-------------------- END CERTIFICATE --------------------</span>
+                                                    </div>
+                                                </th:block>
+                                            </th:block>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> OK
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal my-smaller-text fade" id="certInfoModal">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="row">
+                                                <div class="col-3 text-center align-items-center align-content-center">
+                                                    <img class=" img-fluid border p-o border-dark border-1 rounded rounded-2"
+                                                         th:src="@{/img/countries/{cc}(cc=${schemeTerritory})}"
+                                                         th:alt="${schemeTerritory}">
+                                                </div>
+                                                <div class="col-8">
+                                                    <h4 class="modal-title"> Certificate Information </h4>
+                                                </div>
+                                                <div class="col-1">
+                                                    <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-body">
+                                            <th:block th:each="id : ${certInfos}">
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">Version:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap" th:text="${id.getVersion()}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">SerialNumber:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap"
+                                                              th:text="${id.getSerialNumber()}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">IssuerDn:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap" th:text="${id.getIssuer()}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">Start Date:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap" th:text="${id.getNotBefore()}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">Final Date:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap" th:text="${id.getNotAfter()}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">SubjectDn:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap" th:text="${id.getSubject()}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">Public Key:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap" th:text="${id.getPublicKey()}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">Signature Algorithm:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap"
+                                                              th:text="${id.getSigningAlgorithm()}"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3">
+                                                        <span class="float-end">Signature:</span>
+                                                    </div>
+                                                    <div class="col-9 text-wrap">
+                                                        <span class="text-wrap" th:text="${id.getSignature()}"></span>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> OK
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
