@@ -1,6 +1,7 @@
 package com.alint.disertatie.client.eutlwebview.controller;
 
 import com.alint.disertatie.client.eutlwebview.enginecomm.JavaEngineTransceiver;
+import com.alint.disertatie.client.eutlwebview.util.Util;
 import com.alint.disertatie.client.eutlwebview.model.entity.CertificateValidationResult;
 import com.alint.disertatie.client.eutlwebview.model.entity.SignatureValidationResult;
 import com.alint.disertatie.client.eutlwebview.model.message.CertificateValidationResponse;
@@ -93,6 +94,7 @@ public class ValidationController {
             }
         }
 
+        base64Certificate = Util.cleanBase64Input(base64Certificate);
 
         try (Socket socket = new Socket(hostAddr, hostPort)) {
             ObjectMapper mapper = new ObjectMapper();

@@ -213,4 +213,12 @@ public class Util {
             list.add(obj);
         }
     }
+
+    public static String cleanBase64Input(String base64) {
+        base64 = base64.replace("\n","");
+        base64 = base64.replace("-----BEGIN CERTIFICATE-----", "");
+        base64 = base64.replace("-----END CERTIFICATE-----","");
+
+        return base64;
+    }
 }
