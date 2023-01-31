@@ -3,6 +3,7 @@ package com.alint.disertatie.client.eutlwebview;
 import com.alint.disertatie.client.eutlwebview.model.entity.CertificateInfo;
 import com.alint.disertatie.client.eutlwebview.model.entity.ListOfTrustedLists;
 import com.alint.disertatie.client.eutlwebview.util.CertUtils;
+import com.alint.disertatie.client.eutlwebview.enginecomm.JavaEngineTransceiver;
 import com.alint.disertatie.client.eutlwebview.util.ServerRetriever;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
+import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class EuTlWebViewApplicationTests {
@@ -41,5 +47,46 @@ class EuTlWebViewApplicationTests {
 
         System.out.println(info);
 
+    }
+
+    @Test
+    void checkJavaEngineCommunication() {
+        String message = "Test";
+
+        try (Socket socket = new Socket("localhost", 30001)) {
+            JavaEngineTransceiver transceiver = new JavaEngineTransceiver(socket.getInputStream(), socket.getOutputStream());
+
+            System.out.println("Sending message from client: ");
+            System.out.println(message);
+            transceiver.sendMessage(message);
+
+            String response = transceiver.readMessage();
+            System.out.println("Received message from server: ");
+            System.out.println(response);
+
+            assertEquals(message,new StringBuilder(response).reverse().toString());
+        }
+        catch (IOException exc) {
+            exc.printStackTrace();
+            throw new RuntimeException(exc);
+        }
+    }
+
+    @Test
+    void checkJavaEngineDocumentSignatureValidation() throws IOException {
+        try (Socket socket = new Socket("localhost", 30001)) {
+            String command = "validateSignature";
+            JavaEngineTransceiver transceiver = new JavaEngineTransceiver(socket.getInputStream(), socket.getOutputStream());
+
+            transceiver.sendMessage(command);
+
+
+            byte[] document = Files.readAllBytes(Path.of("C:/Users/Alin Tudose/Desktop/lotl.xml"));
+
+            transceiver.sendBytes(document);
+
+            String response = transceiver.readMessage();
+            System.out.println(response);
+        }
     }
 }

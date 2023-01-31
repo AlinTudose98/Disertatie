@@ -1,10 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
 </head>
 <body>
-$END$
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container rounded rounded-3 bg-light min-height-cover">
+    <div class="container row">
+        <div class="row mt-3">
+            <h1 class="text-wrap my-bold">Verify a certificate</h1>
+        </div>
+        <hr class="separator my-5">
+        <div class="container row">
+            <p class="text-wrap">Select a file that contains a certificate, select the format of the file (DER or PEM
+                only), select the desired engine to handle the validation and click 'Submit' to see the validation
+                results for the selected certificate and its validation chain.</p>
+            <div class="row">
+                <small class="text-wrap">- Disclaimer: The values for the intermediary certificates on the chain may be
+                    incomplete</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <form th:action="@{/validate/certificate}" method="POST" enctype="multipart/form-data">
+            <div class="row my-3">
+                <div class="col">
+                    <div class="form-floating">
+                        <select class="form-select" id="encodingSelect" name="encoding">
+                            <option value="PEM" selected>PEM</option>
+                            <option value="DER">DER</option>
+                        </select>
+                        <label class="form-label" for="encodingSelect">Encoding: </label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-floating">
+                        <select class="form-select" id="engineSelect1" name="engine">
+                            <option value="JAVA" selected>Java European Commission Official DSS API</option>
+                            <option value="C++">C++ proprietary implementation with OpenSSL</option>
+                            <option value="C#">C# proprietary implementation with OpenSSL</option>
+                            <option value="PYTHON">Python proprietary implementation using pyOpenSSL and SignXML
+                            </option>
+                        </select>
+                        <label class="form-label" for="engineSelect1">Engine: </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <input type="file" class="form-control" id="certificateFile" name="certificateFile"
+                       placeholder="PEM/DER encoded file">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+
+        </form>
+    </div>
+
+    <hr class="separator">
+    <div class="container">
+        <div class="row my-3">
+            <p class="text-wrap"> Or directly enter the Base64 encoded certificate content in the textarea below </p>
+            <form th:action="@{/validate/certificate}" method="POST" enctype="multipart/form-data">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-floating mb-3 mt-3">
+                            <textarea class="form-control" id="base64" style="height: 10rem;" name="base64Certificate"
+                                      placeholder="Paste the Base64 Certificate  here"></textarea>
+                            <label for="base64">Base64 encoded Certificate</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-3">
+                    <div class="col">
+                        <div class="form-floating">
+                            <select class="form-select" id="engineSelect2" name="engine">
+                                <option value="JAVA" selected>Java European Commission Official DSS API</option>
+                                <option value="C++">C++ proprietary implementation with OpenSSL</option>
+                                <option value="C#">C# proprietary implementation with OpenSSL</option>
+                                <option value="PYTHON">Python proprietary implementation using pyOpenSSL and SignXML
+                                </option>
+                            </select>
+                            <label class="form-label" for="engineSelect2">Engine: </label>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="encoding" value="base64">
+                <button type="submit" class="my-3 btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/bootstrap-5.3.1-alpha/bootstrap.bundle.min.js}"></script>
+
 </body>
 </html>

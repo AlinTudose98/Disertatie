@@ -1,10 +1,234 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
 </head>
 <body>
-$END$
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container rounded rounded-3 p-3 bg-light min-height-cover">
+    <div class="container row">
+        <div class="row m-3">
+            <h1 class="text-wrap my-bold"> Certificate verification results</h1>
+        </div>
+        <div class="row m-3">
+            <small class="text-wrap">- Disclaimer: The values for the intermediary certificates on the chain may be
+                incomplete</small>
+        </div>
+    </div>
+    <hr class="separator">
+    <div class="container">
+        <div class="row m-3">
+            <h3 class="text-wrap my-bold">Validation info: </h3>
+        </div>
+        <div class="row m-3">
+            <div class="row m-1">
+                <div class="col-3">
+                    <span class="float-end">Validation status: </span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap" th:text="${validationStatus ? 'Passed' : 'Failed'}"></span>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col-3">
+                    <span class="float-end">Is the certificate valid at current time?: </span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap"
+                          th:text="${currentlyValidStatus ? 'Yes' : 'Certificate expired or not yet valid'}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="separator">
+    <div class="container">
+        <div class="row m-3">
+            <h3 class="text-wrap my-bold"> Certificate chain info:</h3>
+        </div>
+        <div class="row mb-3 mx-3">
+            <span class="text-wrap" th:text="${'Chain size: ' + response.getCertificateChain().size()}"></span>
+        </div>
+        <hr>
+        <div class="row m-3">
+            <th:block th:each="certificate : ${response.getCertificateChain()}">
+                <div class="row my-2">
+                    <span class="text-wrap my-bold"
+                          th:text="${'Certificate ' + (response.getCertificateChain().indexOf(certificate) + 1)}"></span>
+                </div>
+                <div class="row my-2">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">Subject: </span>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-wrap text-break" th:text="${certificate.getSubject()}"></span>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">Validity period: </span>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-wrap text-break"
+                              th:text="${certificate.getNotBefore() + ' - ' + certificate.getNotAfter()}"></span>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">Qualification at Issuance: </span>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-wrap text-break"
+                              th:text="${certificate.getQualificationAtIssuance().getLabel() == null ? 'Unknown' : certificate.getQualificationAtIssuance().getLabel()}"></span>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">Qualification at Validation: </span>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-wrap text-break"
+                              th:text="${certificate.getQualificationAtValidation().getLabel() == null ? 'Unknown' : certificate.getQualificationAtValidation().getLabel()}"></span>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">RevocationStatus: </span>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-wrap text-break"
+                              th:text="${certificate.getRevocationStatus().getRevocationReason() == null ? 'Not revoked' : certificate.getRevocationStatus().getRevocationDate() + ': ' + certificate.getRevocationStatus().getRevocationReason()}"></span>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">Key usages: </span>
+                    </div>
+                    <div class="col-9">
+                        <div class="text-wrap text-break" th:each="usage : ${certificate.getKeyUsages()}">
+                            <span class="text-wrap text-break" th:text="${usage}"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">Validation time: </span>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-wrap text-break" th:text="${certificate.getValidationTime()}"></span>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">Indication: </span>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-wrap text-break" th:text="${certificate.getIndication()}"></span>
+                    </div>
+                </div>
+                <div class="row my-2" th:if="${certificate.getSubIndication()!=null}">
+                    <div class="col-3">
+                        <span class="text-wrap my-bold float-end">Subindication: </span>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-wrap text-break" th:text="${certificate.getSubIndication()}"></span>
+                    </div>
+                </div>
+                <hr>
+            </th:block>
+        </div>
+    </div>
+
+    <hr class="separator">
+
+    <div class="container">
+        <div class="row m-3">
+            <h3 class="text-wrap my-bold">Submitted certificate info: </h3>
+        </div>
+        <div class="container row m-3">
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">Version:</span>
+                </div>
+                <div class="col-10 text-wrap">
+                    <span class="text-wrap" th:text="${certInfo.getVersion()}"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">SerialNumber:</span>
+                </div>
+                <div class="col-10 text-wrap text-break">
+                    <span class="text-wrap"
+                          th:text="${certInfo.getSerialNumber()}"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">IssuerDn:</span>
+                </div>
+                <div class="col-10 text-wrap">
+                    <span class="text-wrap" th:text="${certInfo.getIssuer()}"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">Start Date:</span>
+                </div>
+                <div class="col-10 text-wrap">
+                    <span class="text-wrap" th:text="${certInfo.getNotBefore()}"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">Final Date:</span>
+                </div>
+                <div class="col-10 text-wrap">
+                    <span class="text-wrap" th:text="${certInfo.getNotAfter()}"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">SubjectDn:</span>
+                </div>
+                <div class="col-10 text-wrap">
+                    <span class="text-wrap" th:text="${certInfo.getSubject()}"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">Public Key:</span>
+                </div>
+                <div class="col-10 text-wrap text-break">
+                    <span class="text-wrap text-break" th:text="${certInfo.getPublicKey()}"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">Signature Algorithm:</span>
+                </div>
+                <div class="col-10 text-wrap text-break">
+                    <span class="text-wrap text-break"
+                          th:text="${certInfo.getSigningAlgorithm()}"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <span class="float-end">Signature:</span>
+                </div>
+                <div class="col-10 text-wrap text-break">
+                    <span class="text-wrap text-break" th:text="${certInfo.getSignature()}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/bootstrap-5.3.1-alpha/bootstrap.bundle.min.js}"></script>
+
 </body>
 </html>

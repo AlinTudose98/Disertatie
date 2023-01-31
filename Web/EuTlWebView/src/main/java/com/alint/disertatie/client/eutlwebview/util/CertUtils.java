@@ -6,10 +6,8 @@ import eu.europa.esig.dss.model.x509.CertificateToken;
 import eu.europa.esig.dss.spi.DSSUtils;
 import org.apache.commons.codec.binary.Hex;
 
-import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 
 

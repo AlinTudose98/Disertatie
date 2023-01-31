@@ -1,6 +1,6 @@
-package com.alint.disertatie.client.eutlwebview.model.message;
+package com.alint.disertatie.engine.javadssengine.message;
 
-import com.alint.disertatie.client.eutlwebview.model.entity.CertificateValidationResult;
+import com.alint.disertatie.engine.javadssengine.entity.CertificateValidationResult;
 import lombok.*;
 
 import java.util.List;

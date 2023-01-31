@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container rounded rounded-3 p-3 bg-light min-height-cover">
+    <div class="container row">
+        <div class="row m-3">
+            <h1 class="text-wrap my-bold"> Signature verification results</h1>
+        </div>
+    </div>
+    <hr class="separator">
+    <div class="container">
+        <div class="row m-3">
+            <h3 class="text-wrap my-bold">Validation info: </h3>
+        </div>
+        <div class="row m-3">
+            <div class="row m-1">
+                <div class="col-3">
+                    <span class="float-end">Indication:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap" th:text="${indication ? 'Total Passed' : 'Failed'}"></span>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col-3">
+                    <span class="float-end">Validation policy:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap"
+                          th:text="${response.getValidationPolicy().getPolicyName() + ': ' + response.getValidationPolicy().getPolicyDescription()}"></span>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col-3">
+                    <span class="float-end">Total signatures present:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap"
+                          th:text="${response.getSignaturesCount()}"></span>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col-3">
+                    <span class="float-end">Valid signatures:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap"
+                          th:text="${response.getValidSignaturesCount()}"></span>
+                </div>
+            </div>
+            <div class="row m-1">
+                <div class="col-3">
+                    <span class="float-end">Validation time:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap"
+                          th:text="${response.getValidationTime()}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="separator">
+    <div class="container">
+        <div class="row m-3">
+            <h3 class="text-wrap my-bold">Signatures: </h3>
+        </div>
+        <hr>
+        <th:block th:each="signature : ${response.getSignatureResults()}">
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Signing time:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getSigningTime()}"></span>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Best signature time:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getBestSignatureTime()}"></span>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Signed by:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getSignedBy()}"></span>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Signature level:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getSignatureLevel()}"></span>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Signature scopes:</span>
+                </div>
+                <div class="col-9">
+                    <div class="row" th:each="scope : ${signature.getSignatureScopes()}">
+                        <span class="text-wrap text-break" th:text="${scope}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Signature Format</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getSignatureFormat()}"></span>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Minimum extension period:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getExtensionPeriodMin()}"></span>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Maximum extension period:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getExtensionPeriodMax()}"></span>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Certificate chain:</span>
+                </div>
+                <div class="col-9">
+                    <div class="row" th:each="cer : ${signature.getCertificateChain()}">
+                        <span class="text-wrap text-break" th:text="${cer}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Warnings:</span>
+                </div>
+                <div class="col-9">
+                    <div class="row" th:each="warning : ${signature.getWarnings()}">
+                        <span class="text-wrap text-break" th:text="${warning.getValue()}"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-3">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Indication:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getIndication()}"></span>
+                </div>
+            </div>
+            <div class="row m-3" th:if="${signature.getSubIndication()!=null}">
+                <div class="col-3">
+                    <span class="float-end text-wrap my-bold">Subindication:</span>
+                </div>
+                <div class="col-9">
+                    <span class="text-wrap text-break" th:text="${signature.getSubIndication()}"></span>
+                </div>
+            </div>
+            <hr>
+        </th:block>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/bootstrap-5.3.1-alpha/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -286,4 +286,28 @@ public class WebController {
 
         return "view - trustedServiceHistory";
     }
+
+    @GetMapping("/validateCertificate/")
+    public String verifyCertificateRoute(HttpServletRequest request) {
+        return verifyCertificate(request);
+    }
+
+    @GetMapping("/validateCertificate")
+    public String verifyCertificate(HttpServletRequest request) {
+        log.trace("Got request " + request.getRequestURI() + " from " + request.getRemoteAddr());
+
+        return "view - verifyCertificate";
+    }
+
+    @GetMapping("/validateSignature/")
+    public String verifySignatureRoute(HttpServletRequest request) {
+        return verifySignature(request);
+    }
+
+    @GetMapping("/validateSignature")
+    public String verifySignature(HttpServletRequest request) {
+        log.trace("Got request " + request.getRequestURI() + " from " + request.getRemoteAddr());
+
+        return "view - verifySignature";
+    }
 }
