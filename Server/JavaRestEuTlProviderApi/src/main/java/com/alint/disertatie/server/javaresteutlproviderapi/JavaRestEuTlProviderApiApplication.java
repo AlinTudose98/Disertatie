@@ -1,10 +1,7 @@
 package com.alint.disertatie.server.javaresteutlproviderapi;
 
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.OtherTSLPointer;
-import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLParser;
-import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLValidator;
-import com.alint.disertatie.server.javaresteutlproviderapi.util.MemoryCell;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.STIEuTLParser;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.STIEuTLValidator;
 import com.google.common.util.concurrent.Monitor;
 import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
@@ -37,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -205,8 +201,8 @@ public class JavaRestEuTlProviderApiApplication {
         ConfigurableApplicationContext context =
                 SpringApplication.run(JavaRestEuTlProviderApiApplication.class, args);
 
-        EuTLValidator euTLValidator = context.getBean("euTLValidator", EuTLValidator.class);
-        EuTLParser euTLParser = context.getBean("euTLParser", EuTLParser.class);
+        STIEuTLValidator euTLValidator = context.getBean("STIEuTLValidator", STIEuTLValidator.class);
+        STIEuTLParser euTLParser = context.getBean("STIEuTLParser", STIEuTLParser.class);
 
         Thread verifyThread = new Thread(euTLValidator,"validatorThread");
         Thread parserThread = new Thread(euTLParser,"parserThread");

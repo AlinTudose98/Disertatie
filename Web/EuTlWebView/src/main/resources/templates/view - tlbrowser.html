@@ -45,7 +45,7 @@
                     <div class="col-1"></div>
                     <div class="col-6 m-1 align-items-end align-content-end text-end">
                         <h4><a class="text-decoration-none my-dark-blue text-end"
-                               th:text="${@countries.getCountry(pointer.getSchemeTerritory())}"
+                               th:text="${@STICountries.getCountry(pointer.getSchemeTerritory())}"
                                th:href="@{/tlbrowser/{cc}(cc=${pointer.getSchemeTerritory()})}"></a></h4>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                 <div class="col-1"></div>
                 <div class="col-6 m-1 align-items-end align-content-end text-end">
                     <h4><a class="text-decoration-none my-dark-blue text-end"
-                           th:text="${@countries.getCountry(EUPointer.getSchemeTerritory())}"
+                           th:text="${@STICountries.getCountry(EUPointer.getSchemeTerritory())}"
                            th:href="@{/tlbrowser/{cc}(cc=${EUPointer.getSchemeTerritory()})}"></a></h4>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                     <div class="col-1"></div>
                     <div class="col-6 m-1 align-items-end align-content-end text-end">
                         <h4><a class="text-decoration-none my-dark-blue text-end"
-                               th:text="${@countries.getCountry(UKPointer.getSchemeTerritory())}"
+                               th:text="${@STICountries.getCountry(UKPointer.getSchemeTerritory())}"
                                th:href="@{/tlbrowser/{cc}(cc=${UKPointer.getSchemeTerritory()})}"></a></h4>
                     </div>
                 </div>

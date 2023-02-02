@@ -205,7 +205,7 @@
                                                 <h6 class="my-bold mb-0">Issue date</h6>
                                             </div>
                                             <div class="row">
-                                                <span th:text="${@util.formatTime(lotl.getListIssueDateTime())}"></span>
+                                                <span th:text="${@STIUtil.formatTime(lotl.getListIssueDateTime())}"></span>
                                             </div>
                                         </div>
                                         <div class="row my-3">
@@ -213,7 +213,7 @@
                                                 <h6 class="my-bold mb-0">Next update</h6>
                                             </div>
                                             <div class="row">
-                                                <span th:text="${@util.formatTime(lotl.getNextUpdate())}"></span>
+                                                <span th:text="${@STIUtil.formatTime(lotl.getNextUpdate())}"></span>
                                             </div>
                                         </div>
                                         <div class="row my-3">

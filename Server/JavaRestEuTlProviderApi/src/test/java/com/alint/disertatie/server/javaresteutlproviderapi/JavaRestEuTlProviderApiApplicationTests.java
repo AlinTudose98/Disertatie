@@ -1,11 +1,11 @@
 package com.alint.disertatie.server.javaresteutlproviderapi;
 
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.ListOfTrustedLists;
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.OtherTSLPointer;
-import com.alint.disertatie.server.javaresteutlproviderapi.entity.TrustServiceProvider;
-import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLParser;
-import com.alint.disertatie.server.javaresteutlproviderapi.util.EuTLValidator;
-import com.alint.disertatie.server.javaresteutlproviderapi.util.Util;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.STIListOfTrustedLists;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.STIOtherTSLPointer;
+import com.alint.disertatie.server.javaresteutlproviderapi.entity.STITrustServiceProvider;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.STIEuTLParser;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.STIEuTLValidator;
+import com.alint.disertatie.server.javaresteutlproviderapi.util.STIUtil;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class JavaRestEuTlProviderApiApplicationTests {
 
     private final Environment env;
-    private final EuTLParser parser;
-    private final EuTLValidator validator;
+    private final STIEuTLParser parser;
+    private final STIEuTLValidator validator;
 
     @Autowired
-    public JavaRestEuTlProviderApiApplicationTests(Environment env, EuTLParser parser, EuTLValidator validator) {
+    public JavaRestEuTlProviderApiApplicationTests(Environment env, STIEuTLParser parser, STIEuTLValidator validator) {
         this.env = env;
         this.parser = parser;
         this.validator = validator;
@@ -47,16 +47,16 @@ class JavaRestEuTlProviderApiApplicationTests {
         Thread myThread = new Thread(parser);
         myThread.start();
 
-        String lotlXmlSource = Util.getResponseFromUrl(env.getProperty("dss.europa.tl.lotl_url"));
-        ListOfTrustedLists listOfTrustedLists = parser.getListOfTrustedLists();
-        for (OtherTSLPointer pointer: listOfTrustedLists.getPointersToOtherTsl()) {
+        String lotlXmlSource = STIUtil.getResponseFromUrl(env.getProperty("dss.europa.tl.lotl_url"));
+        STIListOfTrustedLists listOfTrustedLists = parser.getListOfTrustedLists();
+        for (STIOtherTSLPointer pointer: listOfTrustedLists.getPointersToOtherTsl()) {
             System.out.println("curl --insecure https://eutlservice:8443/api/tl/" + pointer.getSchemeTerritory());
         }
     }
 
     @Test
     void TSPInformationGetsPopulatedWell() throws Exception {
-        String ATTlXmlSource = Util.getResponseFromUrl("https://www.signatur.rtr.at/currenttl.xml");
+        String ATTlXmlSource = STIUtil.getResponseFromUrl("https://www.signatur.rtr.at/currenttl.xml");
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         InputStream inputStream = IOUtils.toInputStream(ATTlXmlSource, StandardCharsets.UTF_8);
@@ -68,18 +68,18 @@ class JavaRestEuTlProviderApiApplicationTests {
         Element trustServiceProvider = (Element) trustServiceProvidersList.getElementsByTagName("TrustServiceProvider").item(0);
         Element tspInformation = (Element) trustServiceProvider.getElementsByTagName("TSPInformation").item(0);
 
-        TrustServiceProvider tsp = new TrustServiceProvider();
-        Util.parseTSPInformation(tspInformation, tsp, false);
+        STITrustServiceProvider tsp = new STITrustServiceProvider();
+        STIUtil.parseTSPInformation(tspInformation, tsp, false);
 
         assertEquals("A-Trust Gesellschaft für Sicherheitssysteme im elektronischen Datenverkehr GmbH",tsp.getName());
-        assertEquals("A-Trust Ges. für Sicherheitssysteme im elektr. Datenverkehr GmbH", tsp.getTradeName());
+        assertEquals("A-Trust Ges. für Sicherheitssysteme im elektr. Datenverkehr GmbH", tsp.getTradeNames());
         assertEquals(1, tsp.getPostalAddresses().size());
         assertEquals(3,tsp.getElectronicAddresses().size());
     }
 
     @Test
     void TSPGetsParsedWell() throws Exception{
-        String ATTlXmlSource = Util.getResponseFromUrl("https://www.signatur.rtr.at/currenttl.xml");
+        String ATTlXmlSource = STIUtil.getResponseFromUrl("https://www.signatur.rtr.at/currenttl.xml");
 
         DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         InputStream inputStream = IOUtils.toInputStream(ATTlXmlSource, StandardCharsets.UTF_8);
@@ -92,9 +92,9 @@ class JavaRestEuTlProviderApiApplicationTests {
         Element tspServices = (Element) trustServiceProvider.getElementsByTagName("TSPServices").item(0);
 
 
-        TrustServiceProvider tsp = new TrustServiceProvider();
-        Util.parseTSPInformation(trustServiceProvider, tsp,false);
-        tsp.setTrustServices(Util.parseTrustServices(tspServices,false));
+        STITrustServiceProvider tsp = new STITrustServiceProvider();
+        STIUtil.parseTSPInformation(trustServiceProvider, tsp,false);
+        tsp.setTrustServices(STIUtil.parseTrustServices(tspServices,false));
 
         System.out.println(tsp);
     }

@@ -38,7 +38,7 @@
                                   th:text="${qual}"></span>
                             <span th:if="${!qual.startsWith('Q')}" class="m-1 text-black badge bg-secondary"
                                   th:text="${qual}"></span>
-                            <strong th:text="${@util.translateQual(qual)}"></strong>
+                            <strong th:text="${@STIUtil.translateQual(qual)}"></strong>
                         </a>
                     </div>
                     <div th:id="${qual.replace(' ','')} + 'AccordionBody'" class="collapse"
@@ -60,13 +60,13 @@
                                                         <span th:if="${!qual.startsWith('Q')}"
                                                               class="text-black badge bg-secondary my-lighter"
                                                               th:text="${tss[i].getTrustService().getServiceType().getValue().replace('http://uri.etsi.org/TrstSvc/Svctype/','')}"></span>
-                                                        <span th:if="${tss[i].getTrustService().getServiceStatus() == T(com.alint.disertatie.client.eutlwebview.model.enums.TrustServiceStatus).Granted}"
+                                                        <span th:if="${tss[i].getTrustService().getServiceStatus() == T(com.alint.disertatie.client.eutlwebview.model.enums.STITrustServiceStatus).Granted}"
                                                               class="badge bg-success my-lighter">
                                                             Granted
                                                         </span>
-                                                        <span th:if="${!(tss[i].getTrustService().getServiceStatus() == T(com.alint.disertatie.client.eutlwebview.model.enums.TrustServiceStatus).Granted)}"
+                                                        <span th:if="${!(tss[i].getTrustService().getServiceStatus() == T(com.alint.disertatie.client.eutlwebview.model.enums.STITrustServiceStatus).Granted)}"
                                                               class="badge bg-dark my-lighter"
-                                                              th:text="${@util.translateStatus(tss[i].getTrustService().getServiceStatus())}">
+                                                              th:text="${@STIUtil.translateStatus(tss[i].getTrustService().getServiceStatus())}">
                                                         </span>
                                                     </th:block>
                                                 </h6>

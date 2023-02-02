@@ -365,7 +365,7 @@
                     <div class="row" th:each="i : ${#numbers.sequence(0,history.size() - 1)}">
                         <a class="my-dark-blue"
                            th:href="@{/tlbrowser/{schemeTerritory}/{tspId}/{serviceId}/{historyId}(schemeTerritory=${schemeTerritory},tspId=${tspId},serviceId=${serviceId},historyId=${history[i].getId()})}"
-                           th:text="${@util.formatTime(history[i].getHistoryInstance().getStatusStartingTime()) + ': ' + history[i].getHistoryInstance().getServiceStatus()}"></a>
+                           th:text="${@STIUtil.formatTime(history[i].getHistoryInstance().getStatusStartingTime()) + ': ' + history[i].getHistoryInstance().getServiceStatus()}"></a>
                     </div>
                 </div>
             </div>

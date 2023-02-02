@@ -16,7 +16,7 @@
             <!--            <div class="col-1"></div>-->
             <div class="col-10">
                 <h1 class="float-start"
-                    th:text="'Trusted List ' + ${@countries.getCountry(schemeTerritory)}"></h1>
+                    th:text="'Trusted List ' + ${@STICountries.getCountry(schemeTerritory)}"></h1>
             </div>
             <div class="col-1">
                 <div th:replace="~{fragments/warnings :: warning-dropdown}"></div>
