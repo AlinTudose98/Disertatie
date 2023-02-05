@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static eu.europa.esig.dss.enumerations.QCType.LOG;
 
@@ -56,9 +57,9 @@ public class STISpringBootAppConfig {
     }
 
     @Bean
-    public CommonTrustedCertificateSource jskCertificateSource() throws IOException {
+    public CommonTrustedCertificateSource ojjksCertificateSource() throws IOException {
         CommonTrustedCertificateSource source = new CommonTrustedCertificateSource();
-        source.importAsTrusted(new KeyStoreCertificateSource(env.getProperty("java.security.keystore.default-path"),KeyStore.getDefaultType(),"changeit"));
+        source.importAsTrusted(new KeyStoreCertificateSource(getClass().getClassLoader().getResourceAsStream(env.getProperty("security.keystore.oj-path")),KeyStore.getDefaultType(),"changeit"));
 
         return source;
     }

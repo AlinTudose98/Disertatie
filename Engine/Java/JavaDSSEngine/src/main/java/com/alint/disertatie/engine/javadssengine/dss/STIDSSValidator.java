@@ -40,7 +40,7 @@ public class STIDSSValidator {
         job.onlineRefresh();
 
         cv.addTrustedCertSources(trustedListsCertificateSource);
-        //cv.addTrustedCertSources(jksCertificateSource);
+        cv.addTrustedCertSources(jksCertificateSource);
         cv.setCrlSource(new OnlineCRLSource());
         cv.setOcspSource(new OnlineOCSPSource());
         cv.setAIASource(new DefaultAIASource());

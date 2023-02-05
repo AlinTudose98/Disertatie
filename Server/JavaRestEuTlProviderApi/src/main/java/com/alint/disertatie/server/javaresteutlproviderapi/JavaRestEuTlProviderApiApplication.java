@@ -10,6 +10,8 @@ import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
 import eu.europa.esig.dss.spi.client.http.DSSFileLoader;
 import eu.europa.esig.dss.spi.client.http.IgnoreDataLoader;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
+import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
+import eu.europa.esig.dss.spi.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.spi.x509.aia.DefaultAIASource;
 import eu.europa.esig.dss.tsl.alerts.LOTLAlert;
 import eu.europa.esig.dss.tsl.alerts.TLAlert;
@@ -41,6 +43,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -98,6 +102,14 @@ public class JavaRestEuTlProviderApiApplication {
         job.setTLAlerts(Arrays.asList(tlSigningAlert(),tlExpirationDetection()));
 
         return job;
+    }
+
+    @Bean
+    public CommonTrustedCertificateSource ojJksCertificateSource() throws IOException {
+        CommonTrustedCertificateSource source = new CommonTrustedCertificateSource();
+        source.importAsTrusted(new KeyStoreCertificateSource(getClass().getClassLoader().getResourceAsStream(env.getProperty("security.keystore.oj-path")), KeyStore.getDefaultType(),"changeit"));
+
+        return source;
     }
 
     public TrustedListsCertificateSource trustedCertificateSource() {

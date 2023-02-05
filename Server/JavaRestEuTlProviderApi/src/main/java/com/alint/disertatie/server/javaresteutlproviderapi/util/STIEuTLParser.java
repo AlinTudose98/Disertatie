@@ -11,6 +11,7 @@ import eu.europa.esig.dss.enumerations.SubIndication;
 import eu.europa.esig.dss.jaxb.object.Message;
 import eu.europa.esig.dss.model.InMemoryDocument;
 import eu.europa.esig.dss.simplereport.SimpleReport;
+import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
 import eu.europa.esig.dss.validation.reports.Reports;
@@ -73,6 +74,7 @@ public class STIEuTLParser implements Runnable {
         this.memoryCell = memoryCell;
     }
 
+
     @PostConstruct
     private void configure() {
         this.runInterval = Long.parseLong(
@@ -80,6 +82,8 @@ public class STIEuTLParser implements Runnable {
         );
         this.certificateVerifier = this.getApplicationContext()
                 .getBean("STIEuTLValidator", STIEuTLValidator.class).getCertificateVerifier();
+        this.certificateVerifier.addTrustedCertSources(this.getApplicationContext().getBean("ojJksCertificateSource",
+                CommonTrustedCertificateSource.class));
     }
 
 
