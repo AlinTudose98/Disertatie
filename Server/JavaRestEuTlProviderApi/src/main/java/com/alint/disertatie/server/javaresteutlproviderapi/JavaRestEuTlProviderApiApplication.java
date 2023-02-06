@@ -7,6 +7,7 @@ import eu.europa.esig.dss.service.crl.OnlineCRLSource;
 import eu.europa.esig.dss.service.http.commons.CommonsDataLoader;
 import eu.europa.esig.dss.service.http.commons.FileCacheDataLoader;
 import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
+import eu.europa.esig.dss.spi.DSSUtils;
 import eu.europa.esig.dss.spi.client.http.DSSFileLoader;
 import eu.europa.esig.dss.spi.client.http.IgnoreDataLoader;
 import eu.europa.esig.dss.spi.tsl.TrustedListsCertificateSource;
@@ -41,6 +42,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,7 +109,13 @@ public class JavaRestEuTlProviderApiApplication {
     @Bean
     public CommonTrustedCertificateSource ojJksCertificateSource() throws IOException {
         CommonTrustedCertificateSource source = new CommonTrustedCertificateSource();
-        source.importAsTrusted(new KeyStoreCertificateSource(getClass().getClassLoader().getResourceAsStream(env.getProperty("security.keystore.oj-path")), KeyStore.getDefaultType(),"changeit"));
+        File ojDir = new ClassPathResource("keystore/OJ/").getFile();
+        for (File certFile : ojDir.listFiles()) {
+            if (certFile.isDirectory())
+                continue;
+
+            source.addCertificate(DSSUtils.loadCertificate(certFile));
+        }
 
         return source;
     }

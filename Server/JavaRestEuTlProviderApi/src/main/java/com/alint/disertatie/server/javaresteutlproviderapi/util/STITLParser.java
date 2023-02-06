@@ -11,6 +11,7 @@ import eu.europa.esig.dss.enumerations.SubIndication;
 import eu.europa.esig.dss.jaxb.object.Message;
 import eu.europa.esig.dss.model.InMemoryDocument;
 import eu.europa.esig.dss.simplereport.SimpleReport;
+import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
 import eu.europa.esig.dss.validation.reports.Reports;
@@ -20,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +56,7 @@ public class STITLParser {
 
 
     @Autowired
-    public STITLParser(CertificateVerifier certificateVerifier, STIMemoryCell memoryCell, Environment env) {
+    public STITLParser(ApplicationContext context, CertificateVerifier certificateVerifier, STIMemoryCell memoryCell, Environment env) {
         this.certificateVerifier = certificateVerifier;
         this.memoryCell = memoryCell;
         this.expireTime = Long.parseLong(env.getProperty("dss.europa.tl.parser.run_interval_s","600"));
