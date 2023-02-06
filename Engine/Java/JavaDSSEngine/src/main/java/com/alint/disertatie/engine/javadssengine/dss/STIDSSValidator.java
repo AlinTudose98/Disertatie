@@ -23,6 +23,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
 public class STIDSSValidator {
@@ -46,14 +50,18 @@ public class STIDSSValidator {
         cv.setAIASource(new DefaultAIASource());
     }
 
-    public SimpleCertificateReport validateCertificate(String base64Certificate) {
+    public SimpleCertificateReport validateCertificate(String base64Certificate, String valTime) throws ParseException {
 //        job.onlineRefresh();
         CertificateToken certificate = DSSUtils.loadCertificateFromBase64EncodedString(base64Certificate);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+        Date valTimeDate = sdf.parse(valTime);
 
         CertificateValidator validator = CertificateValidator.fromCertificate(certificate);
+
         validator.setCertificateVerifier(cv);
         validator.setTokenExtractionStrategy(TokenExtractionStrategy.EXTRACT_CERTIFICATES_AND_REVOCATION_DATA);
+        validator.setValidationTime(valTimeDate);
         CertificateReports certificateReports = validator.validate();
 
         return certificateReports.getSimpleReport();
@@ -64,6 +72,7 @@ public class STIDSSValidator {
         SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(new InMemoryDocument(document));
 
         validator.setCertificateVerifier(cv);
+        validator.setTokenExtractionStrategy(TokenExtractionStrategy.EXTRACT_CERTIFICATES_AND_REVOCATION_DATA);
 
         Reports reports = validator.validateDocument();
 

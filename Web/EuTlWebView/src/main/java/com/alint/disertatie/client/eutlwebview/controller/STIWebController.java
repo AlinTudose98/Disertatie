@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/")
@@ -288,14 +285,15 @@ public class STIWebController {
     }
 
     @GetMapping("/validateCertificate/")
-    public String verifyCertificateRoute(HttpServletRequest request) {
-        return verifyCertificate(request);
+    public String verifyCertificateRoute(HttpServletRequest request,Model model) {
+        return verifyCertificate(request,model);
     }
 
     @GetMapping("/validateCertificate")
-    public String verifyCertificate(HttpServletRequest request) {
+    public String verifyCertificate(HttpServletRequest request, Model model) {
         log.trace("Got request " + request.getRequestURI() + " from " + request.getRemoteAddr());
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+        model.addAttribute("now",sdf.format(new Date()));
         return "view - verifyCertificate";
     }
 

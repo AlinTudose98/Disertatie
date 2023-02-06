@@ -23,20 +23,20 @@
         </div>
         <div class="row m-3">
             <div class="row m-1">
-                <div class="col-3">
+                <div class="col-4">
                     <span class="float-end">Validation status: </span>
                 </div>
-                <div class="col-9">
+                <div class="col-8">
                     <span class="text-wrap" th:text="${validationStatus ? 'Passed' : 'Failed'}"></span>
                 </div>
             </div>
             <div class="row m-1">
-                <div class="col-3">
-                    <span class="float-end">Is the certificate valid at current time?: </span>
+                <div class="col-4">
+                    <span class="float-end">Is the certificate valid at validation time?: </span>
                 </div>
-                <div class="col-9">
+                <div class="col-8">
                     <span class="text-wrap"
-                          th:text="${currentlyValidStatus ? 'Yes' : 'Certificate expired or not yet valid'}"></span>
+                          th:text="${currentlyValidStatus ? 'Yes' : 'Certificate invalid or outside of validity period'}"></span>
                 </div>
             </div>
         </div>

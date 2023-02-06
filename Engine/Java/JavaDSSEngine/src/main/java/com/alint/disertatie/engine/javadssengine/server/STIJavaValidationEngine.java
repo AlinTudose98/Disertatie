@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -114,6 +115,8 @@ public class STIJavaValidationEngine {
 
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
             } finally {
                 try {
                     if (!clientSocket.isClosed()) {
@@ -125,11 +128,13 @@ public class STIJavaValidationEngine {
             }
         }
 
-        private void validateCertificate(STIJavaEngineTransceiver transceiver) throws IOException {
+        private void validateCertificate(STIJavaEngineTransceiver transceiver) throws IOException, ParseException {
             String base64Certificate = transceiver.readMessage();
+            String valTime = transceiver.readMessage();
 
-            SimpleCertificateReport report = validator.validateCertificate(base64Certificate);
+            SimpleCertificateReport report = validator.validateCertificate(base64Certificate,valTime);
             STICertificateValidationResponse response = new STICertificateValidationResponse();
+
             response.setCertificateChain(new ArrayList<>());
 
             for (XmlChainItem certificate : report.getJaxbModel().getChain()) {

@@ -15,27 +15,12 @@
         <hr class="separator my-5">
         <div class="container row">
             <p class="text-wrap">Select a file that contains a digital signature, select the desired engine to handle
-                the validation and click 'Submit' to see the validation results. Right now, only signatures in XAdES
-                format are supported by the C++, C# and Python engines. The Java Engine supports all signature formats.</p>
+                the validation and click 'Submit' to see the validation results. </p>
         </div>
     </div>
 
     <div class="container">
         <form th:action="@{/validate/signature}" method="POST" enctype="multipart/form-data">
-            <div class="row my-3">
-                <div class="col">
-                    <div class="form-floating">
-                        <select class="form-select" id="engineSelect1" name="engine">
-                            <option value="JAVA" selected>Java European Commission Official DSS API</option>
-<!--                            <option value="C++">C++ proprietary implementation with OpenSSL</option>-->
-<!--                            <option value="C#">C# proprietary implementation with OpenSSL</option>-->
-<!--                            <option value="PYTHON">Python proprietary implementation using pyOpenSSL and SignXML-->
-<!--                            </option>-->
-                        </select>
-                        <label class="form-label" for="engineSelect1">Engine: </label>
-                    </div>
-                </div>
-            </div>
             <div class="row my-3 ">
                 <input type="file" class="form-control" id="signatureFile" name="signatureFile"
                        placeholder="PEM/DER encoded file">

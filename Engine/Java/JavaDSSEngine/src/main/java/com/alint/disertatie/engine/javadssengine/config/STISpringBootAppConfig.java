@@ -66,6 +66,7 @@ public class STISpringBootAppConfig {
     @Bean
     public CertificateVerifier cv(){
         CertificateVerifier cv = new CommonCertificateVerifier();
+
         cv.setCheckRevocationForUntrustedChains(false);
 
         cv.setAlertOnMissingRevocationData(new ExceptionOnStatusAlert());

@@ -1,12 +1,12 @@
 package com.alint.disertatie.client.eutlwebview.controller;
 
 import com.alint.disertatie.client.eutlwebview.enginecomm.STIJavaEngineTransceiver;
-import com.alint.disertatie.client.eutlwebview.util.STIUtil;
 import com.alint.disertatie.client.eutlwebview.model.entity.STICertificateValidationResult;
 import com.alint.disertatie.client.eutlwebview.model.entity.STISignatureValidationResult;
 import com.alint.disertatie.client.eutlwebview.model.message.STICertificateValidationResponse;
 import com.alint.disertatie.client.eutlwebview.model.message.STISignedFileValidationResponse;
 import com.alint.disertatie.client.eutlwebview.util.STICertUtils;
+import com.alint.disertatie.client.eutlwebview.util.STIUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nullable;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
@@ -42,7 +43,7 @@ public class STIValidationController {
     }
 
     @PostMapping(value = "/certificate")
-    public String validateCertificate(Model model, @RequestParam("engine") String engine, @Nullable @RequestParam("base64Certificate") String base64CertificateText, @Nullable @RequestParam("certificateFile") MultipartFile certificateFile, @RequestParam("encoding") String encoding) throws IOException {
+    public String validateCertificate(Model model, @RequestParam("valTime") String valTime, @Nullable @RequestParam("base64Certificate") String base64CertificateText, @Nullable @RequestParam("certificateFile") MultipartFile certificateFile, @RequestParam("encoding") String encoding) throws IOException {
 
 
         String base64Certificate = "UNINITIALIZED";
@@ -70,29 +71,10 @@ public class STIValidationController {
         }
         String hostAddr;
         int hostPort;
-        switch (engine) {
-            case "JAVA" -> {
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.java.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.java.port")));
-            }
-            case "C++" -> {
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.cpp.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.cpp.port")));
-            }
-            case "C#" -> {
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.csharp.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.csharp.port")));
-            }
-            case "PYTHON" -> {
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.python.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.python.port")));
-            }
-            default -> {
-                log.warn("Unsupported value for validation engine selection. Defaulting to JAVA");
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.java.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.java.port")));
-            }
-        }
+
+        hostAddr = Objects.requireNonNull(env.getProperty("engine.java.addr"));
+        hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.java.port")));
+
 
         base64Certificate = STIUtil.cleanBase64Input(base64Certificate);
 
@@ -105,6 +87,13 @@ public class STIValidationController {
 
             transceiver.sendMessage(base64Certificate);
 
+            if(valTime==null || valTime.equals("")){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+                valTime = sdf.format(new Date());
+            }
+
+            transceiver.sendMessage(valTime);
+
             String certValRespString = transceiver.readMessage();
 
             transceiver.closeConnections();
@@ -116,7 +105,7 @@ public class STIValidationController {
             boolean currentlyValidStatus = true;
 
             for (STICertificateValidationResult result : response.getCertificateChain()) {
-                if(!result.getIndication().equalsIgnoreCase("PASSED")) {
+                if (!result.getIndication().equalsIgnoreCase("PASSED")) {
                     validationStatus = false;
                     break;
                 }
@@ -124,7 +113,7 @@ public class STIValidationController {
 
             Date date = new Date(System.currentTimeMillis());
 
-            currentlyValidStatus = validationStatus && date.compareTo(response.getCertificateChain().get(0).getNotBefore())>= 0 && date.compareTo(response.getCertificateChain().get(0).getNotAfter()) <= 0;
+            currentlyValidStatus = validationStatus && date.compareTo(response.getCertificateChain().get(0).getNotBefore()) >= 0 && date.compareTo(response.getCertificateChain().get(0).getNotAfter()) <= 0;
 
             model.addAttribute("validationStatus", validationStatus);
             model.addAttribute("currentlyValidStatus", currentlyValidStatus);
@@ -139,38 +128,18 @@ public class STIValidationController {
     }
 
     @PostMapping("/signature")
-    public String validateSignature(Model model, @RequestParam("engine") String engine, @RequestParam("signatureFile") MultipartFile signatureFile) throws IOException {
+    public String validateSignature(Model model, @RequestParam("signatureFile") MultipartFile signatureFile) throws IOException {
 
         byte[] bytes = signatureFile.getInputStream().readAllBytes();
 
         String hostAddr;
         int hostPort;
-        switch (engine) {
-            case "JAVA" -> {
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.java.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.java.port")));
-            }
-            case "C++" -> {
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.cpp.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.cpp.port")));
-            }
-            case "C#" -> {
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.csharp.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.csharp.port")));
-            }
-            case "PYTHON" -> {
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.python.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.python.port")));
-            }
-            default -> {
-                log.warn("Unsupported value for validation engine selection. Defaulting to JAVA");
-                hostAddr = Objects.requireNonNull(env.getProperty("engine.java.addr"));
-                hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.java.port")));
-            }
-        }
 
-        try(Socket socket = new Socket(hostAddr,hostPort)) {
-            STIJavaEngineTransceiver transceiver = new STIJavaEngineTransceiver(socket.getInputStream(),socket.getOutputStream());
+        hostAddr = Objects.requireNonNull(env.getProperty("engine.java.addr"));
+        hostPort = Integer.parseInt(Objects.requireNonNull(env.getProperty("engine.java.port")));
+
+        try (Socket socket = new Socket(hostAddr, hostPort)) {
+            STIJavaEngineTransceiver transceiver = new STIJavaEngineTransceiver(socket.getInputStream(), socket.getOutputStream());
             ObjectMapper mapper = new ObjectMapper();
 
             transceiver.sendMessage(VALIDATE_SIGNATURE_COMMAND);
@@ -185,13 +154,13 @@ public class STIValidationController {
             model.addAttribute("response", response.getResult());
 
             boolean indication = true;
-            for(STISignatureValidationResult result : response.getResult().getSignatureResults()) {
-                if(!result.getIndication().equalsIgnoreCase("TOTAL_PASSED")) {
+            for (STISignatureValidationResult result : response.getResult().getSignatureResults()) {
+                if (!result.getIndication().equalsIgnoreCase("TOTAL_PASSED")) {
                     indication = false;
                     break;
                 }
             }
-            model.addAttribute("indication",indication);
+            model.addAttribute("indication", indication);
         }
 
         return "view - signatureVerificationResults";
